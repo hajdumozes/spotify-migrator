@@ -1,5 +1,7 @@
 package com.mozeshajdu.spotifymigrator.tag.web;
 
+import com.mozeshajdu.spotifymigrator.spotify.entity.SpotifyTrack;
+import com.mozeshajdu.spotifymigrator.spotify.mapper.SpotifyTrackMapper;
 import com.mozeshajdu.spotifymigrator.tag.service.AudioTagService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -18,9 +20,11 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AudioTagController {
     AudioTagService audioTagService;
+    SpotifyTrackMapper spotifyTrackMapper;
 
     @GetMapping
-    public ResponseEntity<List<Track>> get() {
-        return ResponseEntity.ok(audioTagService.get());
+    public ResponseEntity<List<SpotifyTrack>> get() {
+        List<Track> tracks = audioTagService.get();
+        return ResponseEntity.ok(spotifyTrackMapper.toSpotifyTrackList(tracks));
     }
 }

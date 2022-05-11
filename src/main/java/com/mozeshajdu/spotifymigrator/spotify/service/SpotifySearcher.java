@@ -1,9 +1,11 @@
 package com.mozeshajdu.spotifymigrator.spotify.service;
 
+import com.mozeshajdu.spotifymigrator.spotify.entity.SearchParameters;
+import com.mozeshajdu.spotifymigrator.spotify.exception.CredentialGenerationException;
+import com.mozeshajdu.spotifymigrator.spotify.exception.SpotifySearchException;
 import com.mozeshajdu.spotifymigrator.tag.entity.AudioTag;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Component;
 import se.michaelthelin.spotify.SpotifyApi;
@@ -23,17 +25,42 @@ public class SpotifySearcher {
     SpotifyApi spotifyApi;
     SpotifyQueryStringGenerator searchTrackQueryParam;
 
-    @SneakyThrows
     public Track getFromSpotify(AudioTag audioTag) {
-        ClientCredentials credentials = spotifyApi.clientCredentials().build().execute();
+        ClientCredentials credentials = getClientCredentials();
         spotifyApi.setAccessToken(credentials.getAccessToken());
-        SearchTracksRequest request =
-                spotifyApi.searchTracks(searchTrackQueryParam.generateFrom(audioTag)).build();
-        Paging<Track> result = request.execute();
+        SearchTracksRequest request = createRequest(audioTag);
+        Paging<Track> result = executeSearch(request);
         return filterMostPopular(Arrays.asList(result.getItems()));
+    }
+
+
+    private SearchTracksRequest createRequest(AudioTag audioTag) {
+        SearchParameters searchParameters = SearchParameters.builder()
+                .title(audioTag.getTitle())
+                .artist(audioTag.getArtists().get(0).getName())
+                .album(audioTag.getAlbum())
+                .year(audioTag.getYear())
+                .build();
+        return spotifyApi.searchTracks(searchTrackQueryParam.generateFrom(searchParameters)).build();
     }
 
     private Track filterMostPopular(List<Track> tracks) {
         return tracks.stream().max(Comparator.comparing(Track::getPopularity)).orElseGet(() -> new Track.Builder().build());
+    }
+
+    private ClientCredentials getClientCredentials() {
+        try {
+            return spotifyApi.clientCredentials().build().execute();
+        } catch (Exception e) {
+            throw new CredentialGenerationException(e.getMessage());
+        }
+    }
+
+    private Paging<Track> executeSearch(SearchTracksRequest request) {
+        try {
+            return request.execute();
+        } catch (Exception e) {
+            throw new SpotifySearchException(e.getMessage());
+        }
     }
 }

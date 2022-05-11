@@ -5,3 +5,4 @@
 - get user followed albums
 - like tracks for user
 - save info, that track is liked in audio-tag-manager
+- filter out previews

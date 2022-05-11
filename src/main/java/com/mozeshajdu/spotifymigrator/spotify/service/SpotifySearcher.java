@@ -3,6 +3,7 @@ package com.mozeshajdu.spotifymigrator.spotify.service;
 import com.mozeshajdu.spotifymigrator.spotify.entity.SearchParameters;
 import com.mozeshajdu.spotifymigrator.spotify.exception.CredentialGenerationException;
 import com.mozeshajdu.spotifymigrator.spotify.exception.SpotifySearchException;
+import com.mozeshajdu.spotifymigrator.spotify.exception.SpotifyTrackNotFound;
 import com.mozeshajdu.spotifymigrator.tag.entity.AudioTag;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -57,7 +58,8 @@ public class SpotifySearcher {
     }
 
     private Track filterMostPopular(List<Track> tracks) {
-        return tracks.stream().max(Comparator.comparing(Track::getPopularity)).orElseGet(() -> new Track.Builder().build());
+        return tracks.stream().max(Comparator.comparing(Track::getPopularity))
+                .orElseThrow(SpotifyTrackNotFound::new);
     }
 
     private ClientCredentials getClientCredentials() {

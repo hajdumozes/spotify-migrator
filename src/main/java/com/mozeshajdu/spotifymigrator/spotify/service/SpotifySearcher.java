@@ -34,6 +34,6 @@ public class SpotifySearcher {
     }
 
     private Track filterMostPopular(List<Track> tracks) {
-        return tracks.stream().min(Comparator.comparing(Track::getPopularity)).orElseGet(() -> new Track.Builder().build());
+        return tracks.stream().max(Comparator.comparing(Track::getPopularity)).orElseGet(() -> new Track.Builder().build());
     }
 }

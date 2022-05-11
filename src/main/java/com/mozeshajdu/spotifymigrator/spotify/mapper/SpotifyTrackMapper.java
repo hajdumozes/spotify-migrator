@@ -1,6 +1,7 @@
 package com.mozeshajdu.spotifymigrator.spotify.mapper;
 
 import com.mozeshajdu.spotifymigrator.spotify.entity.SpotifyTrack;
+import org.apache.logging.log4j.util.Strings;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -37,6 +38,6 @@ public interface SpotifyTrackMapper {
     default String of(ExternalUrl externalUrl) {
         return Optional.ofNullable(externalUrl)
                 .map(url -> url.get("spotify"))
-                .orElse("");
+                .orElse(Strings.EMPTY);
     }
 }

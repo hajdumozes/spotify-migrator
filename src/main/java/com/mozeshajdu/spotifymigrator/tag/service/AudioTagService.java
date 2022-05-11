@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import se.michaelthelin.spotify.model_objects.specification.Track;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -18,9 +19,11 @@ public class AudioTagService {
     AudioTagManagerClient audioTagManagerClient;
     SpotifySearcher spotifySearcher;
 
-    public List<Track> get() {
+    public List<Track> getTrackFromSpotify() {
         List<AudioTag> audioTags = audioTagManagerClient.getAudioTags();
-        return audioTags.stream().map(spotifySearcher::getFromSpotify)
+        return audioTags.stream()
+                .map(spotifySearcher::getFromSpotify)
+                .flatMap(Optional::stream)
                 .toList();
     }
 }

@@ -24,7 +24,7 @@ public class AudioTagController {
 
     @GetMapping
     public ResponseEntity<List<SpotifyTrack>> get() {
-        List<Track> tracks = audioTagService.get();
+        List<Track> tracks = audioTagService.getTrackFromSpotify();
         return ResponseEntity.ok(spotifyTrackMapper.toSpotifyTrackList(tracks));
     }
 }

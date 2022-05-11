@@ -3,11 +3,11 @@ package com.mozeshajdu.spotifymigrator.spotify.service;
 import com.mozeshajdu.spotifymigrator.spotify.entity.SearchParameters;
 import com.mozeshajdu.spotifymigrator.spotify.exception.CredentialGenerationException;
 import com.mozeshajdu.spotifymigrator.spotify.exception.SpotifySearchException;
-import com.mozeshajdu.spotifymigrator.spotify.exception.SpotifyTrackNotFound;
 import com.mozeshajdu.spotifymigrator.tag.entity.AudioTag;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import se.michaelthelin.spotify.SpotifyApi;
 import se.michaelthelin.spotify.model_objects.credentials.ClientCredentials;
@@ -18,15 +18,17 @@ import se.michaelthelin.spotify.requests.data.search.simplified.SearchTracksRequ
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@Slf4j
 public class SpotifySearcher {
     SpotifyApi spotifyApi;
     SpotifyQueryStringGenerator searchTrackQueryParam;
 
-    public Track getFromSpotify(AudioTag audioTag) {
+    public Optional<Track> getFromSpotify(AudioTag audioTag) {
         ClientCredentials credentials = getClientCredentials();
         spotifyApi.setAccessToken(credentials.getAccessToken());
         SearchTracksRequest request = createDefaultRequest(audioTag);
@@ -35,7 +37,7 @@ public class SpotifySearcher {
             SearchTracksRequest requestWithoutAlbum = createRequestWithoutAlbum(audioTag);
             result = executeSearch(requestWithoutAlbum);
         }
-        return filterMostPopular(Arrays.asList(result.getItems()));
+        return filterMostPopular(Arrays.asList(result.getItems()), audioTag);
     }
 
     private SearchTracksRequest createDefaultRequest(AudioTag audioTag) {
@@ -57,9 +59,12 @@ public class SpotifySearcher {
         return spotifyApi.searchTracks(searchTrackQueryParam.generateFrom(searchParameters)).build();
     }
 
-    private Track filterMostPopular(List<Track> tracks) {
-        return tracks.stream().max(Comparator.comparing(Track::getPopularity))
-                .orElseThrow(SpotifyTrackNotFound::new);
+    private Optional<Track> filterMostPopular(List<Track> tracks, AudioTag audioTag) {
+        Optional<Track> result = tracks.stream().max(Comparator.comparing(Track::getPopularity));
+        result.ifPresentOrElse(
+                track -> log.trace("search result found for {}", audioTag.toString()),
+                () -> log.warn("search result not found for {}", audioTag.toString()));
+        return result;
     }
 
     private ClientCredentials getClientCredentials() {

@@ -9,7 +9,6 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 import se.michaelthelin.spotify.model_objects.specification.Track;
 
-import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -22,7 +21,6 @@ public class AudioTagService {
     public List<Track> get() {
         List<AudioTag> audioTags = audioTagManagerClient.getAudioTags();
         return audioTags.stream().map(spotifySearcher::getFromSpotify)
-                .flatMap(Collection::stream)
                 .toList();
     }
 }

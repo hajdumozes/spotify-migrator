@@ -13,6 +13,7 @@ import se.michaelthelin.spotify.model_objects.specification.Track;
 import se.michaelthelin.spotify.requests.data.search.simplified.SearchTracksRequest;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 @Component
@@ -23,12 +24,16 @@ public class SpotifySearcher {
     SpotifyQueryStringGenerator searchTrackQueryParam;
 
     @SneakyThrows
-    public List<Track> getFromSpotify(AudioTag audioTag) {
+    public Track getFromSpotify(AudioTag audioTag) {
         ClientCredentials credentials = spotifyApi.clientCredentials().build().execute();
         spotifyApi.setAccessToken(credentials.getAccessToken());
         SearchTracksRequest request =
                 spotifyApi.searchTracks(searchTrackQueryParam.generateFrom(audioTag)).build();
-        Paging<Track> execute = request.execute();
-        return Arrays.stream(execute.getItems()).toList();
+        Paging<Track> result = request.execute();
+        return filterMostPopular(Arrays.asList(result.getItems()));
+    }
+
+    private Track filterMostPopular(List<Track> tracks) {
+        return tracks.stream().min(Comparator.comparing(Track::getPopularity)).orElseGet(() -> new Track.Builder().build());
     }
 }

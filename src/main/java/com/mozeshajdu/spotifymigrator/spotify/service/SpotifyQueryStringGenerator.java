@@ -9,7 +9,7 @@ public class SpotifyQueryStringGenerator {
     public static final String SPOTIFY_ALBUM_QUERY_PARAM = "album";
     public static final String SPOTIFY_ARTIST_QUERY_PARAM = "artist";
     public static final String SPOTIFY_YEAR_QUERY_PARAM = "year";
-    public static final String SPOTIFY_QUERY_DELIMITER = ": ";
+    public static final String SPOTIFY_QUERY_DELIMITER = " ";
     public static final String SPOTIFY_SEARCH_PARAM_FORMAT = "%s:%s";
 
     public String generateFrom(AudioTag audioTag) {

@@ -14,8 +14,7 @@ public class SpotifyTrack {
     String album;
     String releaseDate;
     List<String> artists;
-    String href;
     Integer popularity;
     String trackNumber;
-
+    String url;
 }

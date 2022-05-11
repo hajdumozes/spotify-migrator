@@ -1,0 +1,8 @@
+- filter spotify track results
+- find tracks missing
+- respond to audio-tag-manager, save spotify info
+- get user liked tracks
+- get user followed artists
+- get user followed albums
+- like tracks for user
+- save info, that track is liked in audio-tag-manager

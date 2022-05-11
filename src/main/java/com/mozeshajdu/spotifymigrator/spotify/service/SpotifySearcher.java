@@ -28,17 +28,29 @@ public class SpotifySearcher {
     public Track getFromSpotify(AudioTag audioTag) {
         ClientCredentials credentials = getClientCredentials();
         spotifyApi.setAccessToken(credentials.getAccessToken());
-        SearchTracksRequest request = createRequest(audioTag);
+        SearchTracksRequest request = createDefaultRequest(audioTag);
         Paging<Track> result = executeSearch(request);
+        if (result.getTotal() == 0) {
+            SearchTracksRequest requestWithoutAlbum = createRequestWithoutAlbum(audioTag);
+            result = executeSearch(requestWithoutAlbum);
+        }
         return filterMostPopular(Arrays.asList(result.getItems()));
     }
 
-
-    private SearchTracksRequest createRequest(AudioTag audioTag) {
+    private SearchTracksRequest createDefaultRequest(AudioTag audioTag) {
         SearchParameters searchParameters = SearchParameters.builder()
                 .title(audioTag.getTitle())
                 .artist(audioTag.getArtists().get(0).getName())
                 .album(audioTag.getAlbum())
+                .year(audioTag.getYear())
+                .build();
+        return spotifyApi.searchTracks(searchTrackQueryParam.generateFrom(searchParameters)).build();
+    }
+
+    private SearchTracksRequest createRequestWithoutAlbum(AudioTag audioTag) {
+        SearchParameters searchParameters = SearchParameters.builder()
+                .title(audioTag.getTitle())
+                .artist(audioTag.getArtists().get(0).getName())
                 .year(audioTag.getYear())
                 .build();
         return spotifyApi.searchTracks(searchTrackQueryParam.generateFrom(searchParameters)).build();

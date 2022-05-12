@@ -16,4 +16,5 @@ public class AudioTag {
     List<Artist> artists;
     List<AlbumArtist> albumArtists;
     List<Genre> genres;
+    String rating;
 }

@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 public class SpotifyQueryStringGenerator {
     public static final String SPOTIFY_QUERY_DELIMITER = " ";
     public static final String SPOTIFY_SEARCH_PARAM_FORMAT = "%s:%s";
+    public static final String APOSTROPHE = "'";
 
     public String generateFrom(List<SearchParameter> searchParameters, AudioTag audioTag) {
         return searchParameters.stream()
@@ -22,7 +23,11 @@ public class SpotifyQueryStringGenerator {
 
     private String getQueryPart(String field, String fieldValue) {
         return Optional.ofNullable(fieldValue)
-                .map(value -> String.format(SPOTIFY_SEARCH_PARAM_FORMAT, field, value))
+                .map(value -> String.format(SPOTIFY_SEARCH_PARAM_FORMAT, field, removeApostrophe(value)))
                 .orElse(Strings.EMPTY);
+    }
+
+    private String removeApostrophe(String string) {
+        return string.replace(APOSTROPHE, Strings.EMPTY);
     }
 }

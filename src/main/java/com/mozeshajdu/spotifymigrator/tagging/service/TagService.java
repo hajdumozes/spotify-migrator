@@ -1,5 +1,6 @@
 package com.mozeshajdu.spotifymigrator.tagging.service;
 
+import com.mozeshajdu.spotifymigrator.spotify.entity.SearchParameter;
 import com.mozeshajdu.spotifymigrator.spotify.service.SpotifySearcher;
 import com.mozeshajdu.spotifymigrator.tagging.client.AudioTagManagerClient;
 import com.mozeshajdu.spotifymigrator.tagging.entity.AudioTag;
@@ -20,10 +21,10 @@ public class TagService {
     SpotifySearcher spotifySearcher;
     SpotifyTrackProducer spotifyTrackProducer;
 
-    public void sendSpotifyTracksForUnconnectedAudioTags() {
+    public void sendSpotifyTracksForUnconnectedAudioTags(List<SearchParameter> searchParameters) {
         List<AudioTag> audioTags = audioTagManagerClient.getUnconnectedAudioTags();
         audioTags.stream()
-                .map(spotifySearcher::getFromSpotify)
+                .map(audioTag -> spotifySearcher.getFromSpotify(audioTag, searchParameters))
                 .flatMap(Optional::stream)
                 .forEach(spotifyTrackProducer::produce);
     }

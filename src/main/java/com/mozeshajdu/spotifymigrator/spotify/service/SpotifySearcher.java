@@ -1,6 +1,6 @@
 package com.mozeshajdu.spotifymigrator.spotify.service;
 
-import com.mozeshajdu.spotifymigrator.spotify.entity.SearchParameters;
+import com.mozeshajdu.spotifymigrator.spotify.entity.SearchParameter;
 import com.mozeshajdu.spotifymigrator.spotify.entity.SpotifyTrack;
 import com.mozeshajdu.spotifymigrator.spotify.exception.CredentialGenerationException;
 import com.mozeshajdu.spotifymigrator.spotify.exception.SpotifySearchException;
@@ -33,40 +33,19 @@ public class SpotifySearcher {
     SpotifyQueryStringGenerator searchTrackQueryParam;
     SpotifyTrackMapper spotifyTrackMapper;
 
-    public Optional<SpotifyTrack> getFromSpotify(AudioTag audioTag) {
+    public Optional<SpotifyTrack> getFromSpotify(AudioTag audioTag, List<SearchParameter> searchParameters) {
+        searchParameters.get(0).getFieldValueGetter().apply(audioTag);
         ClientCredentials credentials = getClientCredentials();
         spotifyApi.setAccessToken(credentials.getAccessToken());
-        SearchTracksRequest request = createDefaultRequest(audioTag);
+        SearchTracksRequest request = getRequest(searchParameters, audioTag);
         Paging<Track> result = executeSearch(request);
-        if (result.getTotal() == 0) {
-            SearchTracksRequest requestWithoutAlbum = createRequestWithoutAlbum(audioTag);
-            result = executeSearch(requestWithoutAlbum);
-        }
         List<SpotifyTrack> spotifyTracks = toSpotifyTracks(audioTag, result);
         return filterMostPopular(spotifyTracks, audioTag);
     }
 
-    private SearchTracksRequest createDefaultRequest(AudioTag audioTag) {
-        SearchParameters searchParameters = SearchParameters.builder()
-                .title(audioTag.getTitle())
-                .artist(audioTag.getArtists().get(0).getName())
-                .album(audioTag.getAlbum())
-                .year(audioTag.getYear())
-                .build();
-        return getRequest(searchParameters);
-    }
 
-    private SearchTracksRequest createRequestWithoutAlbum(AudioTag audioTag) {
-        SearchParameters searchParameters = SearchParameters.builder()
-                .title(audioTag.getTitle())
-                .artist(audioTag.getArtists().get(0).getName())
-                .year(audioTag.getYear())
-                .build();
-        return getRequest(searchParameters);
-    }
-
-    private SearchTracksRequest getRequest(SearchParameters searchParameters) {
-        return spotifyApi.searchTracks(searchTrackQueryParam.generateFrom(searchParameters))
+    private SearchTracksRequest getRequest(List<SearchParameter> searchParameters, AudioTag audioTag) {
+        return spotifyApi.searchTracks(searchTrackQueryParam.generateFrom(searchParameters, audioTag))
                 .market(CountryCode.HU)
                 .build();
     }
@@ -81,7 +60,7 @@ public class SpotifySearcher {
         Optional<SpotifyTrack> result = tracks.stream()
                 .max(Comparator.comparing(SpotifyTrack::getPopularity));
         result.ifPresentOrElse(
-                track -> log.trace("search result found for {}", audioTag.toString()),
+                track -> log.info("search result found for {}", audioTag.toString()),
                 () -> log.warn("search result not found for {}", audioTag.toString()));
         return result;
     }

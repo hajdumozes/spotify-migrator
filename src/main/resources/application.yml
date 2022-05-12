@@ -6,3 +6,18 @@ spotify:
   redirect-uri: ${REDIRECT_URI}
 client:
   audio-tag-manager-url: ${AUDIO_TAG_MANAGER_URL}
+spring:
+  main:
+    web-application-type: none
+  cloud.stream:
+    function:
+      definition: produceSpotifyTracks
+      bindings:
+        produceSpotifyTracks-out-0: spotify-track
+    bindings:
+      spotify-track:
+        destination: ${KAFKA_SPOTIFY_TRACK_TOPIC}
+    default-binder: kafka
+    kafka:
+      binder:
+        brokers: ${KAFKA_SERVER}

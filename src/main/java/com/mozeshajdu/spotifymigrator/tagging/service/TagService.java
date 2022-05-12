@@ -39,4 +39,9 @@ public class TagService {
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
     }
+
+    public List<SpotifyTrack> searchTracksForTag(List<SearchParameter> searchParameters, Long audioTagId) {
+        AudioTag audioTag = audioTagManagerClient.getAudioTagById(audioTagId);
+        return spotifySearcher.search(audioTag, searchParameters);
+    }
 }

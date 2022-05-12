@@ -12,6 +12,7 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -42,7 +43,10 @@ public class TagService {
 
     public List<SpotifyTrack> searchTracksForTag(List<SearchParameter> searchParameters, Long audioTagId) {
         AudioTag audioTag = audioTagManagerClient.getAudioTagById(audioTagId);
-        return spotifySearcher.search(audioTag, searchParameters);
+        return spotifySearcher.search(audioTag, searchParameters)
+                .stream()
+                .sorted(Comparator.comparing(SpotifyTrack::getPopularity, Comparator.reverseOrder()))
+                .collect(Collectors.toList());
     }
 
     public void syncTrackWithTag(String spotifyId, Long audioTagId) {

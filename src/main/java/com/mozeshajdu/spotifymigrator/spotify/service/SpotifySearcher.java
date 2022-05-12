@@ -33,13 +33,16 @@ public class SpotifySearcher {
     SpotifyQueryStringGenerator searchTrackQueryParam;
     SpotifyTrackMapper spotifyTrackMapper;
 
-    public Optional<SpotifyTrack> getFromSpotify(AudioTag audioTag, List<SearchParameter> searchParameters) {
-        searchParameters.get(0).getFieldValueGetter().apply(audioTag);
+    public List<SpotifyTrack> search(AudioTag audioTag, List<SearchParameter> searchParameters) {
         ClientCredentials credentials = getClientCredentials();
         spotifyApi.setAccessToken(credentials.getAccessToken());
         SearchTracksRequest request = getRequest(searchParameters, audioTag);
         Paging<Track> result = executeSearch(request);
-        List<SpotifyTrack> spotifyTracks = toSpotifyTracks(audioTag, result);
+        return toSpotifyTracks(audioTag, result);
+    }
+
+    public Optional<SpotifyTrack> getMostPopularForTag(AudioTag audioTag, List<SearchParameter> searchParameters) {
+        List<SpotifyTrack> spotifyTracks = search(audioTag, searchParameters);
         return filterMostPopular(spotifyTracks, audioTag);
     }
 

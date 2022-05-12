@@ -1,6 +1,7 @@
 package com.mozeshajdu.spotifymigrator.tagging.web;
 
 import com.mozeshajdu.spotifymigrator.spotify.entity.SearchParameter;
+import com.mozeshajdu.spotifymigrator.spotify.entity.SpotifyTrack;
 import com.mozeshajdu.spotifymigrator.tagging.service.TagService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -21,9 +22,15 @@ import java.util.List;
 public class TagController {
     TagService tagService;
 
+    @PostMapping(value = "/search-unconnected", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<SpotifyTrack>> searchUnconnected(@RequestBody List<SearchParameter> searchParameters) {
+        tagService.searchForUnconnected(searchParameters);
+        return ResponseEntity.ok(tagService.searchForUnconnected(searchParameters));
+    }
+
     @PostMapping(value = "/sync-unconnected", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> getAll(@RequestBody List<SearchParameter> searchParameters) {
-        tagService.sendSpotifyTracksForUnconnectedAudioTags(searchParameters);
+    public ResponseEntity<Void> syncUnconnected(@RequestBody List<SearchParameter> searchParameters) {
+        tagService.produceSpotifyTracksForUnconnectedAudioTags(searchParameters);
         return ResponseEntity.ok().build();
     }
 }

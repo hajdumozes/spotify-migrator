@@ -1,6 +1,7 @@
 package com.mozeshajdu.spotifymigrator.tagging.service;
 
 import com.mozeshajdu.spotifymigrator.spotify.entity.SearchParameter;
+import com.mozeshajdu.spotifymigrator.spotify.entity.SpotifyTrack;
 import com.mozeshajdu.spotifymigrator.spotify.service.SpotifySearcher;
 import com.mozeshajdu.spotifymigrator.tagging.client.AudioTagManagerClient;
 import com.mozeshajdu.spotifymigrator.tagging.entity.AudioTag;
@@ -10,8 +11,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -21,11 +24,19 @@ public class TagService {
     SpotifySearcher spotifySearcher;
     SpotifyTrackProducer spotifyTrackProducer;
 
-    public void sendSpotifyTracksForUnconnectedAudioTags(List<SearchParameter> searchParameters) {
+    public void produceSpotifyTracksForUnconnectedAudioTags(List<SearchParameter> searchParameters) {
         List<AudioTag> audioTags = audioTagManagerClient.getUnconnectedAudioTags();
         audioTags.stream()
-                .map(audioTag -> spotifySearcher.getFromSpotify(audioTag, searchParameters))
+                .map(audioTag -> spotifySearcher.getMostPopularForTag(audioTag, searchParameters))
                 .flatMap(Optional::stream)
                 .forEach(spotifyTrackProducer::produce);
+    }
+
+    public List<SpotifyTrack> searchForUnconnected(List<SearchParameter> searchParameters) {
+        List<AudioTag> audioTags = audioTagManagerClient.getUnconnectedAudioTags();
+        return audioTags.stream()
+                .map(audioTag -> spotifySearcher.search(audioTag, searchParameters))
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
     }
 }

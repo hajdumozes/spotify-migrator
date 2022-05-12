@@ -15,7 +15,8 @@ public enum SearchParameter {
     TITLE("track", AudioTag::getTitle),
     ARTIST("artist", tag -> tag.getArtists().get(0).getName()),
     YEAR("year", AudioTag::getYear),
-    ALBUM("album", AudioTag::getAlbum);
+    ALBUM("album", AudioTag::getAlbum),
+    ALBUM_ARTIST("artist", tag -> tag.getAlbumArtists().get(0).getName());
 
     String searchField;
     Function<AudioTag, String> fieldValueGetter;

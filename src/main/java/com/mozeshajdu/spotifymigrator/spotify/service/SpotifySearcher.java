@@ -4,6 +4,7 @@ import com.mozeshajdu.spotifymigrator.spotify.entity.SearchParameters;
 import com.mozeshajdu.spotifymigrator.spotify.exception.CredentialGenerationException;
 import com.mozeshajdu.spotifymigrator.spotify.exception.SpotifySearchException;
 import com.mozeshajdu.spotifymigrator.tag.entity.AudioTag;
+import com.neovisionaries.i18n.CountryCode;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -47,7 +48,7 @@ public class SpotifySearcher {
                 .album(audioTag.getAlbum())
                 .year(audioTag.getYear())
                 .build();
-        return spotifyApi.searchTracks(searchTrackQueryParam.generateFrom(searchParameters)).build();
+        return getRequest(searchParameters);
     }
 
     private SearchTracksRequest createRequestWithoutAlbum(AudioTag audioTag) {
@@ -56,7 +57,13 @@ public class SpotifySearcher {
                 .artist(audioTag.getArtists().get(0).getName())
                 .year(audioTag.getYear())
                 .build();
-        return spotifyApi.searchTracks(searchTrackQueryParam.generateFrom(searchParameters)).build();
+        return getRequest(searchParameters);
+    }
+
+    private SearchTracksRequest getRequest(SearchParameters searchParameters) {
+        return spotifyApi.searchTracks(searchTrackQueryParam.generateFrom(searchParameters))
+                .market(CountryCode.HU)
+                .build();
     }
 
     private Optional<Track> filterMostPopular(List<Track> tracks, AudioTag audioTag) {

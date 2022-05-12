@@ -44,4 +44,9 @@ public class TagService {
         AudioTag audioTag = audioTagManagerClient.getAudioTagById(audioTagId);
         return spotifySearcher.search(audioTag, searchParameters);
     }
+
+    public void syncTrackWithTag(String spotifyId, Long audioTagId) {
+        SpotifyTrack track = spotifySearcher.getById(spotifyId, audioTagId);
+        spotifyTrackProducer.produce(track);
+    }
 }

@@ -17,6 +17,7 @@ import se.michaelthelin.spotify.model_objects.credentials.ClientCredentials;
 import se.michaelthelin.spotify.model_objects.specification.Paging;
 import se.michaelthelin.spotify.model_objects.specification.Track;
 import se.michaelthelin.spotify.requests.data.search.simplified.SearchTracksRequest;
+import se.michaelthelin.spotify.requests.data.tracks.GetTrackRequest;
 
 import java.util.Arrays;
 import java.util.Comparator;
@@ -32,6 +33,16 @@ public class SpotifySearcher {
     SpotifyApi spotifyApi;
     SpotifyQueryStringGenerator searchTrackQueryParam;
     SpotifyTrackMapper spotifyTrackMapper;
+
+    public SpotifyTrack getById(String spotifyId, Long audioTagId) {
+        ClientCredentials credentials = getClientCredentials();
+        spotifyApi.setAccessToken(credentials.getAccessToken());
+        GetTrackRequest request = spotifyApi.getTrack(spotifyId)
+                .market(CountryCode.HU)
+                .build();
+        Track result = executeSearch(request);
+        return spotifyTrackMapper.toSpotifyTrack(result, audioTagId);
+    }
 
     public List<SpotifyTrack> search(AudioTag audioTag, List<SearchParameter> searchParameters) {
         ClientCredentials credentials = getClientCredentials();
@@ -77,6 +88,14 @@ public class SpotifySearcher {
     }
 
     private Paging<Track> executeSearch(SearchTracksRequest request) {
+        try {
+            return request.execute();
+        } catch (Exception e) {
+            throw new SpotifySearchException(e.getMessage());
+        }
+    }
+
+    private Track executeSearch(GetTrackRequest request) {
         try {
             return request.execute();
         } catch (Exception e) {

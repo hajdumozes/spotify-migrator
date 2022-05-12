@@ -1,4 +1,4 @@
-package com.mozeshajdu.spotifymigrator.tag.entity;
+package com.mozeshajdu.spotifymigrator.tagging.entity;
 
 import lombok.AccessLevel;
 import lombok.Data;

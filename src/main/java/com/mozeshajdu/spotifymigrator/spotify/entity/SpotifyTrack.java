@@ -7,9 +7,9 @@ import lombok.experimental.FieldDefaults;
 import java.util.List;
 
 @Data
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class SpotifyTrack {
-    String id;
+    String spotifyId;
     String name;
     String album;
     String releaseDate;
@@ -17,4 +17,5 @@ public class SpotifyTrack {
     Integer popularity;
     String trackNumber;
     String url;
+    Long audioTagId;
 }

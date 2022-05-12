@@ -1,6 +1,6 @@
-package com.mozeshajdu.spotifymigrator.tag.client;
+package com.mozeshajdu.spotifymigrator.tagging.client;
 
-import com.mozeshajdu.spotifymigrator.tag.entity.AudioTag;
+import com.mozeshajdu.spotifymigrator.tagging.entity.AudioTag;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,4 +12,7 @@ public interface AudioTagManagerClient {
 
     @GetMapping(value = "/audio-tags", produces = MediaType.APPLICATION_JSON_VALUE)
     List<AudioTag> getAudioTags();
+
+    @GetMapping(value = "/audio-tags/unconnected", produces = MediaType.APPLICATION_JSON_VALUE)
+    List<AudioTag> getUnconnectedAudioTags();
 }

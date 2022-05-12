@@ -1,4 +1,4 @@
-package com.mozeshajdu.spotifymigrator.tag.entity;
+package com.mozeshajdu.spotifymigrator.tagging.entity;
 
 import lombok.AccessLevel;
 import lombok.Data;
@@ -6,6 +6,6 @@ import lombok.experimental.FieldDefaults;
 
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class AlbumArtist {
+public class Genre {
     String name;
 }

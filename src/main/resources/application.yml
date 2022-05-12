@@ -7,8 +7,6 @@ spotify:
 client:
   audio-tag-manager-url: ${AUDIO_TAG_MANAGER_URL}
 spring:
-  main:
-    web-application-type: none
   cloud.stream:
     function:
       definition: produceSpotifyTracks

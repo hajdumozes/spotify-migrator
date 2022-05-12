@@ -1,9 +1,11 @@
 package com.mozeshajdu.spotifymigrator.spotify.service;
 
 import com.mozeshajdu.spotifymigrator.spotify.entity.SearchParameters;
+import com.mozeshajdu.spotifymigrator.spotify.entity.SpotifyTrack;
 import com.mozeshajdu.spotifymigrator.spotify.exception.CredentialGenerationException;
 import com.mozeshajdu.spotifymigrator.spotify.exception.SpotifySearchException;
-import com.mozeshajdu.spotifymigrator.tag.entity.AudioTag;
+import com.mozeshajdu.spotifymigrator.spotify.mapper.SpotifyTrackMapper;
+import com.mozeshajdu.spotifymigrator.tagging.entity.AudioTag;
 import com.neovisionaries.i18n.CountryCode;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +22,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -28,8 +31,9 @@ import java.util.Optional;
 public class SpotifySearcher {
     SpotifyApi spotifyApi;
     SpotifyQueryStringGenerator searchTrackQueryParam;
+    SpotifyTrackMapper spotifyTrackMapper;
 
-    public Optional<Track> getFromSpotify(AudioTag audioTag) {
+    public Optional<SpotifyTrack> getFromSpotify(AudioTag audioTag) {
         ClientCredentials credentials = getClientCredentials();
         spotifyApi.setAccessToken(credentials.getAccessToken());
         SearchTracksRequest request = createDefaultRequest(audioTag);
@@ -38,7 +42,8 @@ public class SpotifySearcher {
             SearchTracksRequest requestWithoutAlbum = createRequestWithoutAlbum(audioTag);
             result = executeSearch(requestWithoutAlbum);
         }
-        return filterMostPopular(Arrays.asList(result.getItems()), audioTag);
+        List<SpotifyTrack> spotifyTracks = toSpotifyTracks(audioTag, result);
+        return filterMostPopular(spotifyTracks, audioTag);
     }
 
     private SearchTracksRequest createDefaultRequest(AudioTag audioTag) {
@@ -66,8 +71,15 @@ public class SpotifySearcher {
                 .build();
     }
 
-    private Optional<Track> filterMostPopular(List<Track> tracks, AudioTag audioTag) {
-        Optional<Track> result = tracks.stream().max(Comparator.comparing(Track::getPopularity));
+    private List<SpotifyTrack> toSpotifyTracks(AudioTag audioTag, Paging<Track> result) {
+        return Arrays.stream(result.getItems())
+                .map(track -> spotifyTrackMapper.toSpotifyTrack(track, audioTag.getId()))
+                .collect(Collectors.toList());
+    }
+
+    private Optional<SpotifyTrack> filterMostPopular(List<SpotifyTrack> tracks, AudioTag audioTag) {
+        Optional<SpotifyTrack> result = tracks.stream()
+                .max(Comparator.comparing(SpotifyTrack::getPopularity));
         result.ifPresentOrElse(
                 track -> log.trace("search result found for {}", audioTag.toString()),
                 () -> log.warn("search result not found for {}", audioTag.toString()));

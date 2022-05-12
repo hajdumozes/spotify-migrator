@@ -1,5 +1,4 @@
 - find tracks missing
-- respond to audio-tag-manager, save spotify info
 - get user liked tracks
 - get user followed artists
 - get user followed albums

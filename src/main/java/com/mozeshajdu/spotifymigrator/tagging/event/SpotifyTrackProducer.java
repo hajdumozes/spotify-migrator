@@ -1,4 +1,4 @@
-package com.mozeshajdu.spotifymigrator.tag.event;
+package com.mozeshajdu.spotifymigrator.tagging.event;
 
 import com.mozeshajdu.spotifymigrator.spotify.entity.SpotifyTrack;
 import lombok.AccessLevel;
@@ -13,7 +13,7 @@ import reactor.core.publisher.Sinks;
 public class SpotifyTrackProducer {
     Sinks.Many<SpotifyTrack> spotifyTrackSink;
 
-    public void produce(SpotifyTrack audioTag) {
-        spotifyTrackSink.tryEmitNext(audioTag);
+    public void produce(SpotifyTrack spotifyTrack) {
+        spotifyTrackSink.tryEmitNext(spotifyTrack);
     }
 }

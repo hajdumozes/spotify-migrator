@@ -1,7 +1,6 @@
 package com.mozeshajdu.spotifymigrator.spotify.web;
 
 import com.mozeshajdu.spotifymigrator.spotify.entity.LikedTrack;
-import com.mozeshajdu.spotifymigrator.spotify.entity.SpotifyTrack;
 import com.mozeshajdu.spotifymigrator.spotify.service.SpotifyTrackService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;

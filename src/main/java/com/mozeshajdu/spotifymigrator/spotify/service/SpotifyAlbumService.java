@@ -30,9 +30,21 @@ public class SpotifyAlbumService {
                 .collect(Collectors.toList());
     }
 
+    public String unfollowAlbums(List<String> ids) {
+        return removeAlbumsForUser(ids);
+    }
+
     private Paging<SavedAlbum> getFollowedAlbumsRequestResult() {
         try {
             return spotifyApi.getCurrentUsersSavedAlbums().build().execute();
+        } catch (Exception e) {
+            throw new SpotifyApiException(e.getMessage());
+        }
+    }
+
+    private String removeAlbumsForUser(List<String> ids) {
+        try {
+            return spotifyApi.removeAlbumsForCurrentUser(ids.toArray(String[]::new)).build().execute();
         } catch (Exception e) {
             throw new SpotifyApiException(e.getMessage());
         }

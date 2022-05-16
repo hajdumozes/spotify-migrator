@@ -1,5 +1,6 @@
 package com.mozeshajdu.spotifymigrator.spotify.web;
 
+import com.mozeshajdu.spotifymigrator.spotify.entity.LikedTrack;
 import com.mozeshajdu.spotifymigrator.spotify.entity.SpotifyTrack;
 import com.mozeshajdu.spotifymigrator.spotify.service.SpotifyTrackService;
 import lombok.AccessLevel;
@@ -20,7 +21,7 @@ public class SpotifyTrackController {
     SpotifyTrackService spotifyTrackService;
 
     @GetMapping(value = "liked")
-    public ResponseEntity<List<SpotifyTrack>> getLikedTracks() {
+    public ResponseEntity<List<LikedTrack>> getLikedTracks() {
         return ResponseEntity.ok(spotifyTrackService.getLikedTracks());
     }
 }

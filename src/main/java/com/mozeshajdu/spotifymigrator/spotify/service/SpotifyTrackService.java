@@ -1,5 +1,6 @@
 package com.mozeshajdu.spotifymigrator.spotify.service;
 
+import com.mozeshajdu.spotifymigrator.spotify.entity.LikedTrack;
 import com.mozeshajdu.spotifymigrator.spotify.entity.SpotifyTrack;
 import com.mozeshajdu.spotifymigrator.spotify.exception.SpotifyApiException;
 import com.mozeshajdu.spotifymigrator.spotify.mapper.SpotifyTrackMapper;
@@ -22,11 +23,11 @@ public class SpotifyTrackService {
     SpotifyApi spotifyApi;
     SpotifyTrackMapper spotifyTrackMapper;
 
-    public List<SpotifyTrack> getLikedTracks() {
+    public List<LikedTrack> getLikedTracks() {
         Paging<SavedTrack> savedTracks = getSavedTracks();
         return Arrays.stream(savedTracks.getItems())
                 .map(SavedTrack::getTrack)
-                .map(track -> spotifyTrackMapper.toSpotifyTrack(track, null))
+                .map(spotifyTrackMapper::toLikedTrack)
                 .collect(Collectors.toList());
     }
 

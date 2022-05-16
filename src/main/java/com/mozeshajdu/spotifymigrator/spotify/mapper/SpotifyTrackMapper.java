@@ -6,16 +6,9 @@ import org.mapstruct.Context;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
-import org.mapstruct.Named;
-import se.michaelthelin.spotify.model_objects.specification.ArtistSimplified;
-import se.michaelthelin.spotify.model_objects.specification.ExternalUrl;
 import se.michaelthelin.spotify.model_objects.specification.Track;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = {ArtistMapper.class, UrlMapper.class})
 public interface SpotifyTrackMapper {
 
     @Mapping(target = "spotifyId", source = "id")
@@ -29,15 +22,5 @@ public interface SpotifyTrackMapper {
     @AfterMapping
     default void addAudioTagId(@MappingTarget SpotifyTrack target, @Context Long audioTagId) {
         target.setAudioTagId(audioTagId);
-    }
-
-    @Named("artistName")
-    default List<String> of(ArtistSimplified[] artistSimplified) {
-        return Arrays.stream(artistSimplified).map(ArtistSimplified::getName).collect(Collectors.toList());
-    }
-
-    @Named("externalUrl")
-    default String of(ExternalUrl externalUrl) {
-        return externalUrl.get("spotify");
     }
 }

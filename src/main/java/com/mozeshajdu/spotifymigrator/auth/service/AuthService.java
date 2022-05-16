@@ -24,7 +24,7 @@ public class AuthService {
     SpotifyApi spotifyApi;
 
     public String generateAuthorizationCodeUri() {
-        List<SpotifyScope> requiredScopes = List.of(SpotifyScope.PLAYLIST_MODIFY_PRIVATE);
+        List<SpotifyScope> requiredScopes = List.of(SpotifyScope.PLAYLIST_MODIFY_PRIVATE, SpotifyScope.USER_LIBRARY_READ, SpotifyScope.USER_FOLLOW_READ);
         String joinedScopes = requiredScopes.stream()
                 .map(SpotifyScope::getValue)
                 .collect(Collectors.joining(SCOPE_DELIMITER));
@@ -39,6 +39,8 @@ public class AuthService {
     public UserCredential initializeTokens(String code) {
         AuthorizationCodeRequest request = spotifyApi.authorizationCode(code).build();
         AuthorizationCodeCredentials authorizationCodeCredentials = executeCodeRequest(request);
+        spotifyApi.setAccessToken(authorizationCodeCredentials.getAccessToken());
+        spotifyApi.setRefreshToken(authorizationCodeCredentials.getRefreshToken());
         return UserCredential.builder()
                 .accessToken(authorizationCodeCredentials.getAccessToken())
                 .refreshToken(authorizationCodeCredentials.getRefreshToken())

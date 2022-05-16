@@ -3,7 +3,7 @@ package com.mozeshajdu.spotifymigrator.spotify.service;
 import com.mozeshajdu.spotifymigrator.spotify.entity.SearchParameter;
 import com.mozeshajdu.spotifymigrator.spotify.entity.SpotifyTrack;
 import com.mozeshajdu.spotifymigrator.spotify.exception.CredentialGenerationException;
-import com.mozeshajdu.spotifymigrator.spotify.exception.SpotifySearchException;
+import com.mozeshajdu.spotifymigrator.spotify.exception.SpotifyApiException;
 import com.mozeshajdu.spotifymigrator.spotify.mapper.SpotifyTrackMapper;
 import com.mozeshajdu.spotifymigrator.tagging.entity.AudioTag;
 import com.neovisionaries.i18n.CountryCode;
@@ -91,7 +91,7 @@ public class SpotifySearcher {
         try {
             return request.execute();
         } catch (Exception e) {
-            throw new SpotifySearchException(e.getMessage());
+            throw new SpotifyApiException(e.getMessage());
         }
     }
 
@@ -99,7 +99,7 @@ public class SpotifySearcher {
         try {
             return request.execute();
         } catch (Exception e) {
-            throw new SpotifySearchException(e.getMessage());
+            throw new SpotifyApiException(e.getMessage());
         }
     }
 }

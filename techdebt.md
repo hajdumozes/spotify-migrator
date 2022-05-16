@@ -1,7 +1,7 @@
 - find tracks missing
-- get user liked tracks
 - get user followed artists
 - get user followed albums
 - like tracks for user
 - save info, that track is liked in audio-tag-manager
 - filter out previews
+- refresh token usage

@@ -25,10 +25,10 @@ import java.util.List;
 public class TagController {
     TagService tagService;
 
-    @PostMapping(value = "/search-unconnected", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<SpotifyTrack>> searchUnconnected(@RequestBody List<SearchParameter> searchParameters) {
-        tagService.searchForUnconnected(searchParameters);
-        return ResponseEntity.ok(tagService.searchForUnconnected(searchParameters));
+    @PostMapping(value = "/search-disconnected", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<SpotifyTrack>> searchDisconnected(@RequestBody List<SearchParameter> searchParameters) {
+        tagService.searchDisconnected(searchParameters);
+        return ResponseEntity.ok(tagService.searchDisconnected(searchParameters));
     }
 
     @PostMapping(value = "/search-tag", consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -37,9 +37,9 @@ public class TagController {
         return ResponseEntity.ok(result);
     }
 
-    @PostMapping(value = "/sync-unconnected", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> syncUnconnected(@RequestBody List<SearchParameter> searchParameters) {
-        tagService.produceSpotifyTracksForUnconnectedAudioTags(searchParameters);
+    @PostMapping(value = "/sync-disconnected", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Void> syncDisconnected(@RequestBody List<SearchParameter> searchParameters) {
+        tagService.produceSpotifyTracksForDisconnectedAudioTags(searchParameters);
         return ResponseEntity.ok().build();
     }
 

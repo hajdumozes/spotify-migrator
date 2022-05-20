@@ -17,4 +17,5 @@ public class AudioTag {
     List<AlbumArtist> albumArtists;
     List<Genre> genres;
     String rating;
+    String spotifyTrackId;
 }

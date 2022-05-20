@@ -1,9 +1,10 @@
 package com.mozeshajdu.spotifymigrator.spotify.service;
 
 import com.mozeshajdu.spotifymigrator.spotify.entity.LikedTrack;
-import com.mozeshajdu.spotifymigrator.spotify.entity.SpotifyTrack;
 import com.mozeshajdu.spotifymigrator.spotify.exception.SpotifyApiException;
 import com.mozeshajdu.spotifymigrator.spotify.mapper.SpotifyTrackMapper;
+import com.mozeshajdu.spotifymigrator.tagging.client.AudioTagManagerClient;
+import com.mozeshajdu.spotifymigrator.tagging.entity.AudioTag;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -22,12 +23,23 @@ import java.util.stream.Collectors;
 public class SpotifyTrackService {
     SpotifyApi spotifyApi;
     SpotifyTrackMapper spotifyTrackMapper;
+    AudioTagManagerClient audioTagManagerClient;
 
     public List<LikedTrack> getLikedTracks() {
         Paging<SavedTrack> savedTracks = getSavedTracks();
         return Arrays.stream(savedTracks.getItems())
                 .map(SavedTrack::getTrack)
                 .map(spotifyTrackMapper::toLikedTrack)
+                .collect(Collectors.toList());
+    }
+
+    public List<LikedTrack> getDisconnectedLikedTracks() {
+        List<LikedTrack> likedTracks = getLikedTracks();
+        List<String> spotifyTracksInCollection = audioTagManagerClient.getConnectedAudioTags().stream()
+                .map(AudioTag::getSpotifyTrackId)
+                .collect(Collectors.toList());
+        return likedTracks.stream()
+                .filter(likedTrack -> !spotifyTracksInCollection.contains(likedTrack.getSpotifyId()))
                 .collect(Collectors.toList());
     }
 

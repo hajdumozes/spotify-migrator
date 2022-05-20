@@ -25,16 +25,16 @@ public class TagService {
     SpotifySearcher spotifySearcher;
     SpotifyTrackProducer spotifyTrackProducer;
 
-    public void produceSpotifyTracksForUnconnectedAudioTags(List<SearchParameter> searchParameters) {
-        List<AudioTag> audioTags = audioTagManagerClient.getUnconnectedAudioTags();
+    public void produceSpotifyTracksForDisconnectedAudioTags(List<SearchParameter> searchParameters) {
+        List<AudioTag> audioTags = audioTagManagerClient.getDisconnectedAudioTags();
         audioTags.stream()
                 .map(audioTag -> spotifySearcher.getMostPopularForTag(audioTag, searchParameters))
                 .flatMap(Optional::stream)
                 .forEach(spotifyTrackProducer::produce);
     }
 
-    public List<SpotifyTrack> searchForUnconnected(List<SearchParameter> searchParameters) {
-        List<AudioTag> audioTags = audioTagManagerClient.getUnconnectedAudioTags();
+    public List<SpotifyTrack> searchDisconnected(List<SearchParameter> searchParameters) {
+        List<AudioTag> audioTags = audioTagManagerClient.getDisconnectedAudioTags();
         return audioTags.stream()
                 .map(audioTag -> spotifySearcher.search(audioTag, searchParameters))
                 .flatMap(Collection::stream)

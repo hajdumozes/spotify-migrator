@@ -23,4 +23,9 @@ public class SpotifyTrackController {
     public ResponseEntity<List<LikedTrack>> getLikedTracks() {
         return ResponseEntity.ok(spotifyTrackService.getLikedTracks());
     }
+
+    @GetMapping(value = "liked/disconnected")
+    public ResponseEntity<List<LikedTrack>> getDisconnectedLikesTracks() {
+        return ResponseEntity.ok(spotifyTrackService.getDisconnectedLikedTracks());
+    }
 }

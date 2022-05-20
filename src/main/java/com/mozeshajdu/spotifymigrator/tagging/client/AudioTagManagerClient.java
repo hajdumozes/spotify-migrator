@@ -17,6 +17,9 @@ public interface AudioTagManagerClient {
     @GetMapping(value = "/audio-tags/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     AudioTag getAudioTagById(@PathVariable Long id);
 
-    @GetMapping(value = "/audio-tags/unconnected", produces = MediaType.APPLICATION_JSON_VALUE)
-    List<AudioTag> getUnconnectedAudioTags();
+    @GetMapping(value = "/audio-tags/disconnected", produces = MediaType.APPLICATION_JSON_VALUE)
+    List<AudioTag> getDisconnectedAudioTags();
+
+    @GetMapping(value = "/audio-tags/connected", produces = MediaType.APPLICATION_JSON_VALUE)
+    List<AudioTag> getConnectedAudioTags();
 }

@@ -1,7 +1,9 @@
 package com.mozeshajdu.spotifymigrator.spotify.mapper;
 
+import com.mozeshajdu.spotifymigrator.spotify.entity.FollowedArtist;
 import org.mapstruct.Mapper;
 import org.mapstruct.Named;
+import se.michaelthelin.spotify.model_objects.specification.Artist;
 import se.michaelthelin.spotify.model_objects.specification.ArtistSimplified;
 
 import java.util.Arrays;
@@ -15,4 +17,6 @@ public interface ArtistMapper {
     default List<String> of(ArtistSimplified[] artistSimplified) {
         return Arrays.stream(artistSimplified).map(ArtistSimplified::getName).collect(Collectors.toList());
     }
+
+    FollowedArtist of(Artist source);
 }

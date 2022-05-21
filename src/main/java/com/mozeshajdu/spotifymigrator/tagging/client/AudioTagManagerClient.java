@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
+import java.util.Optional;
 
 @FeignClient(value = "audio-tag-manager", url = "${client.audio-tag-manager-url}")
 public interface AudioTagManagerClient {
@@ -14,12 +15,12 @@ public interface AudioTagManagerClient {
     @GetMapping(value = "/audio-tags", produces = MediaType.APPLICATION_JSON_VALUE)
     List<AudioTag> getAudioTags();
 
-    @GetMapping(value = "/audio-tags/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    AudioTag getAudioTagById(@PathVariable Long id);
+    @GetMapping(value = "/audio-tag/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    Optional<AudioTag> getAudioTagById(@PathVariable Long id);
 
-    @GetMapping(value = "/audio-tags/disconnected", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/audio-tag/disconnected", produces = MediaType.APPLICATION_JSON_VALUE)
     List<AudioTag> getDisconnectedAudioTags();
 
-    @GetMapping(value = "/audio-tags/connected", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/audio-tag/connected", produces = MediaType.APPLICATION_JSON_VALUE)
     List<AudioTag> getConnectedAudioTags();
 }

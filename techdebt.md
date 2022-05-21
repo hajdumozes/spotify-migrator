@@ -1,4 +1,3 @@
-- resolve different rating info
 - controller advice for missing token
 - find tracks missing
 - like tracks for user

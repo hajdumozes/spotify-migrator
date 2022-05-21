@@ -6,6 +6,7 @@ import com.mozeshajdu.spotifymigrator.spotify.service.SpotifySearcher;
 import com.mozeshajdu.spotifymigrator.tagging.client.AudioTagManagerClient;
 import com.mozeshajdu.spotifymigrator.tagging.entity.AudioTag;
 import com.mozeshajdu.spotifymigrator.tagging.event.SpotifyTrackProducer;
+import com.mozeshajdu.spotifymigrator.tagging.exception.AudioTagNotFoundException;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -42,7 +43,8 @@ public class TagService {
     }
 
     public List<SpotifyTrack> searchTracksForTag(List<SearchParameter> searchParameters, Long audioTagId) {
-        AudioTag audioTag = audioTagManagerClient.getAudioTagById(audioTagId);
+        AudioTag audioTag = audioTagManagerClient.getAudioTagById(audioTagId)
+                .orElseThrow(() -> new AudioTagNotFoundException(Long.toString(audioTagId)));
         return spotifySearcher.search(audioTag, searchParameters)
                 .stream()
                 .sorted(Comparator.comparing(SpotifyTrack::getPopularity, Comparator.reverseOrder()))

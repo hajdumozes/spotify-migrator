@@ -1,7 +1,6 @@
 package com.mozeshajdu.spotifymigrator.spotify.service;
 
 import com.mozeshajdu.spotifymigrator.spotify.entity.LikedTrack;
-import com.mozeshajdu.spotifymigrator.spotify.exception.SpotifyApiException;
 import com.mozeshajdu.spotifymigrator.spotify.mapper.SpotifyTrackMapper;
 import com.mozeshajdu.spotifymigrator.tagging.client.AudioTagManagerClient;
 import com.mozeshajdu.spotifymigrator.tagging.entity.AudioTag;
@@ -12,10 +11,13 @@ import org.springframework.stereotype.Service;
 import se.michaelthelin.spotify.SpotifyApi;
 import se.michaelthelin.spotify.model_objects.specification.Paging;
 import se.michaelthelin.spotify.model_objects.specification.SavedTrack;
+import se.michaelthelin.spotify.requests.data.library.GetUsersSavedTracksRequest;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.mozeshajdu.spotifymigrator.spotify.util.SpotifyApiUtil.executeRequest;
 
 @Service
 @RequiredArgsConstructor
@@ -26,7 +28,8 @@ public class SpotifyTrackService {
     AudioTagManagerClient audioTagManagerClient;
 
     public List<LikedTrack> getLikedTracks() {
-        Paging<SavedTrack> savedTracks = getSavedTracks();
+        GetUsersSavedTracksRequest request = spotifyApi.getUsersSavedTracks().build();
+        Paging<SavedTrack> savedTracks = executeRequest(request);
         return Arrays.stream(savedTracks.getItems())
                 .map(SavedTrack::getTrack)
                 .map(spotifyTrackMapper::toLikedTrack)
@@ -41,13 +44,5 @@ public class SpotifyTrackService {
         return likedTracks.stream()
                 .filter(likedTrack -> !spotifyTracksInCollection.contains(likedTrack.getSpotifyId()))
                 .collect(Collectors.toList());
-    }
-
-    private Paging<SavedTrack> getSavedTracks() {
-        try {
-            return spotifyApi.getUsersSavedTracks().build().execute();
-        } catch (Exception e) {
-            throw new SpotifyApiException(e.getMessage());
-        }
     }
 }

@@ -1,6 +1,5 @@
 package com.mozeshajdu.spotifymigrator.spotify.service;
 
-import com.mozeshajdu.spotifymigrator.spotify.exception.SpotifyApiException;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -8,7 +7,6 @@ import org.springframework.stereotype.Service;
 import se.michaelthelin.spotify.SpotifyApi;
 import se.michaelthelin.spotify.model_objects.specification.PlaylistSimplified;
 import se.michaelthelin.spotify.model_objects.specification.User;
-import se.michaelthelin.spotify.requests.data.AbstractDataRequest;
 import se.michaelthelin.spotify.requests.data.playlists.CreatePlaylistRequest;
 import se.michaelthelin.spotify.requests.data.playlists.GetListOfUsersPlaylistsRequest;
 import se.michaelthelin.spotify.requests.data.users_profile.GetCurrentUsersProfileRequest;
@@ -16,6 +14,8 @@ import se.michaelthelin.spotify.requests.data.users_profile.GetCurrentUsersProfi
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.mozeshajdu.spotifymigrator.spotify.util.SpotifyApiUtil.executeRequest;
 
 @Service
 @RequiredArgsConstructor
@@ -38,13 +38,5 @@ public class SpotifyPlaylistService {
     private User getUserProfile() {
         GetCurrentUsersProfileRequest request = spotifyApi.getCurrentUsersProfile().build();
         return executeRequest(request);
-    }
-
-    private <T> T executeRequest(AbstractDataRequest<T> request) {
-        try {
-            return request.execute();
-        } catch (Exception e) {
-            throw new SpotifyApiException(e.getMessage());
-        }
     }
 }

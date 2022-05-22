@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.mozeshajdu.spotifymigrator.spotify.util.SpotifyApiUtil.executeRequest;
+
 @Component
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -40,7 +42,7 @@ public class SpotifySearcher {
         GetTrackRequest request = spotifyApi.getTrack(spotifyId)
                 .market(CountryCode.HU)
                 .build();
-        Track result = executeSearch(request);
+        Track result = executeRequest(request);
         return spotifyTrackMapper.toSpotifyTrack(result, audioTagId);
     }
 
@@ -48,7 +50,7 @@ public class SpotifySearcher {
         ClientCredentials credentials = getClientCredentials();
         spotifyApi.setAccessToken(credentials.getAccessToken());
         SearchTracksRequest request = getRequest(searchParameters, audioTag);
-        Paging<Track> result = executeSearch(request);
+        Paging<Track> result = executeRequest(request);
         return toSpotifyTracks(audioTag, result);
     }
 
@@ -84,22 +86,6 @@ public class SpotifySearcher {
             return spotifyApi.clientCredentials().build().execute();
         } catch (Exception e) {
             throw new CredentialGenerationException(e.getMessage());
-        }
-    }
-
-    private Paging<Track> executeSearch(SearchTracksRequest request) {
-        try {
-            return request.execute();
-        } catch (Exception e) {
-            throw new SpotifyApiException(e.getMessage());
-        }
-    }
-
-    private Track executeSearch(GetTrackRequest request) {
-        try {
-            return request.execute();
-        } catch (Exception e) {
-            throw new SpotifyApiException(e.getMessage());
         }
     }
 }

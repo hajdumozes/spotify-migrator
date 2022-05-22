@@ -1,7 +1,6 @@
 package com.mozeshajdu.spotifymigrator.spotify.service;
 
 import com.mozeshajdu.spotifymigrator.spotify.entity.FollowedArtist;
-import com.mozeshajdu.spotifymigrator.spotify.exception.SpotifyApiException;
 import com.mozeshajdu.spotifymigrator.spotify.mapper.ArtistMapper;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -11,10 +10,14 @@ import se.michaelthelin.spotify.SpotifyApi;
 import se.michaelthelin.spotify.enums.ModelObjectType;
 import se.michaelthelin.spotify.model_objects.specification.Artist;
 import se.michaelthelin.spotify.model_objects.specification.PagingCursorbased;
+import se.michaelthelin.spotify.requests.data.follow.GetUsersFollowedArtistsRequest;
+import se.michaelthelin.spotify.requests.data.follow.UnfollowArtistsOrUsersRequest;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.mozeshajdu.spotifymigrator.spotify.util.SpotifyApiUtil.executeRequest;
 
 @Service
 @RequiredArgsConstructor
@@ -24,31 +27,17 @@ public class SpotifyArtistService {
     ArtistMapper artistMapper;
 
     public List<FollowedArtist> getFollowedArtists() {
-        PagingCursorbased<Artist> followedArtistResult = getFollowedArtistResult();
+        GetUsersFollowedArtistsRequest request = spotifyApi.getUsersFollowedArtists(ModelObjectType.ARTIST).build();
+        PagingCursorbased<Artist> followedArtistResult = executeRequest(request);
         return Arrays.stream(followedArtistResult.getItems())
                 .map(artistMapper::of)
                 .collect(Collectors.toList());
     }
 
     public String unfollowArtists(List<String> ids) {
-        return unfollowArtistsRequest(ids);
-    }
-
-    private PagingCursorbased<Artist> getFollowedArtistResult() {
-        try {
-            return spotifyApi.getUsersFollowedArtists(ModelObjectType.ARTIST).build().execute();
-        } catch (Exception e) {
-            throw new SpotifyApiException(e.getMessage());
-        }
-    }
-
-    private String unfollowArtistsRequest(List<String> ids) {
-        try {
-            return spotifyApi.unfollowArtistsOrUsers(
-                    ModelObjectType.ARTIST,
-                    ids.toArray(String[]::new)).build().execute();
-        } catch (Exception e) {
-            throw new SpotifyApiException(e.getMessage());
-        }
+        UnfollowArtistsOrUsersRequest request = spotifyApi.unfollowArtistsOrUsers(
+                ModelObjectType.ARTIST,
+                ids.toArray(String[]::new)).build();
+        return executeRequest(request);
     }
 }

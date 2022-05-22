@@ -1,3 +1,5 @@
+- execute request AOP
+- update tags by collecting them again
 - controller advice for missing token
 - find tracks missing
 - like tracks for user

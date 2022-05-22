@@ -25,6 +25,7 @@ public class AuthService {
 
     public String generateAuthorizationCodeUri() {
         List<SpotifyScope> requiredScopes = List.of(
+                SpotifyScope.PLAYLIST_MODIFY_PUBLIC,
                 SpotifyScope.PLAYLIST_MODIFY_PRIVATE,
                 SpotifyScope.USER_LIBRARY_READ,
                 SpotifyScope.USER_LIBRARY_MODIFY,

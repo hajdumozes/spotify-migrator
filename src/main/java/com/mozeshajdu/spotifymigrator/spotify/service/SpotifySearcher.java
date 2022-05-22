@@ -2,8 +2,6 @@ package com.mozeshajdu.spotifymigrator.spotify.service;
 
 import com.mozeshajdu.spotifymigrator.spotify.entity.SearchParameter;
 import com.mozeshajdu.spotifymigrator.spotify.entity.SpotifyTrack;
-import com.mozeshajdu.spotifymigrator.spotify.exception.CredentialGenerationException;
-import com.mozeshajdu.spotifymigrator.spotify.exception.SpotifyApiException;
 import com.mozeshajdu.spotifymigrator.spotify.mapper.SpotifyTrackMapper;
 import com.mozeshajdu.spotifymigrator.tagging.entity.AudioTag;
 import com.neovisionaries.i18n.CountryCode;
@@ -16,6 +14,7 @@ import se.michaelthelin.spotify.SpotifyApi;
 import se.michaelthelin.spotify.model_objects.credentials.ClientCredentials;
 import se.michaelthelin.spotify.model_objects.specification.Paging;
 import se.michaelthelin.spotify.model_objects.specification.Track;
+import se.michaelthelin.spotify.requests.authorization.client_credentials.ClientCredentialsRequest;
 import se.michaelthelin.spotify.requests.data.search.simplified.SearchTracksRequest;
 import se.michaelthelin.spotify.requests.data.tracks.GetTrackRequest;
 
@@ -37,7 +36,8 @@ public class SpotifySearcher {
     SpotifyTrackMapper spotifyTrackMapper;
 
     public SpotifyTrack getById(String spotifyId, Long audioTagId) {
-        ClientCredentials credentials = getClientCredentials();
+        ClientCredentialsRequest credentialsRequest = spotifyApi.clientCredentials().build();
+        ClientCredentials credentials = executeRequest(credentialsRequest);
         spotifyApi.setAccessToken(credentials.getAccessToken());
         GetTrackRequest request = spotifyApi.getTrack(spotifyId)
                 .market(CountryCode.HU)
@@ -47,7 +47,8 @@ public class SpotifySearcher {
     }
 
     public List<SpotifyTrack> search(AudioTag audioTag, List<SearchParameter> searchParameters) {
-        ClientCredentials credentials = getClientCredentials();
+        ClientCredentialsRequest credentialsRequest = spotifyApi.clientCredentials().build();
+        ClientCredentials credentials = executeRequest(credentialsRequest);
         spotifyApi.setAccessToken(credentials.getAccessToken());
         SearchTracksRequest request = getRequest(searchParameters, audioTag);
         Paging<Track> result = executeRequest(request);
@@ -79,13 +80,5 @@ public class SpotifySearcher {
                 track -> log.info("search result found for {}", audioTag.toString()),
                 () -> log.warn("search result not found for {}", audioTag.toString()));
         return result;
-    }
-
-    private ClientCredentials getClientCredentials() {
-        try {
-            return spotifyApi.clientCredentials().build().execute();
-        } catch (Exception e) {
-            throw new CredentialGenerationException(e.getMessage());
-        }
     }
 }

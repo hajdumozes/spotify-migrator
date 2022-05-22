@@ -1,8 +1,6 @@
-- execute request AOP
+- like tracks on condition (rating > x)
+- save info, that track is liked in audio-tag-manager
 - update tags by collecting them again
 - controller advice for missing token
-- find tracks missing
-- like tracks for user
-- save info, that track is liked in audio-tag-manager
 - filter out previews
 - refresh token usage

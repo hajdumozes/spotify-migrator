@@ -12,6 +12,7 @@ import se.michaelthelin.spotify.SpotifyApi;
 import se.michaelthelin.spotify.model_objects.specification.Paging;
 import se.michaelthelin.spotify.model_objects.specification.SavedTrack;
 import se.michaelthelin.spotify.requests.data.library.GetUsersSavedTracksRequest;
+import se.michaelthelin.spotify.requests.data.library.SaveTracksForUserRequest;
 
 import java.util.Arrays;
 import java.util.List;
@@ -44,5 +45,10 @@ public class SpotifyTrackService {
         return likedTracks.stream()
                 .filter(likedTrack -> !spotifyTracksInCollection.contains(likedTrack.getSpotifyId()))
                 .collect(Collectors.toList());
+    }
+
+    public void likeTracks(List<String> ids) {
+        SaveTracksForUserRequest request = spotifyApi.saveTracksForUser(ids.toArray(String[]::new)).build();
+        executeRequest(request);
     }
 }

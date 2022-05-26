@@ -1,6 +1,4 @@
 - like tracks on condition (rating > x)
 - save info, that track is liked in audio-tag-manager
-- update tags by collecting them again
 - controller advice for missing token
-- filter out previews
 - refresh token usage

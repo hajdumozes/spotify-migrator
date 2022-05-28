@@ -37,4 +37,10 @@ public class SpotifyTrackController {
         spotifyTrackService.likeTracks(ids);
         return ResponseEntity.ok().build();
     }
+
+    @PostMapping(value = "liked/remove", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<LikedTrack>> removeLikedTracks(@RequestBody List<String> ids) {
+        spotifyTrackService.removeLikedTracks(ids);
+        return ResponseEntity.ok().build();
+    }
 }

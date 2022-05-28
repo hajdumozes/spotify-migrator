@@ -1,9 +1,12 @@
 package com.mozeshajdu.spotifymigrator.spotify.service;
 
 import com.mozeshajdu.spotifymigrator.spotify.entity.LikedTrack;
+import com.mozeshajdu.spotifymigrator.spotify.entity.SpotifyAction;
+import com.mozeshajdu.spotifymigrator.spotify.entity.TracksLikedMessage;
 import com.mozeshajdu.spotifymigrator.spotify.mapper.SpotifyTrackMapper;
 import com.mozeshajdu.spotifymigrator.tagging.client.AudioTagManagerClient;
 import com.mozeshajdu.spotifymigrator.tagging.entity.AudioTag;
+import com.mozeshajdu.spotifymigrator.tagging.event.TracksLikedMessageProducer;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -28,6 +31,7 @@ public class SpotifyTrackService {
     SpotifyApi spotifyApi;
     SpotifyTrackMapper spotifyTrackMapper;
     AudioTagManagerClient audioTagManagerClient;
+    TracksLikedMessageProducer tracksLikedMessageProducer;
 
     public List<LikedTrack> getLikedTracks() {
         GetUsersSavedTracksRequest request = spotifyApi.getUsersSavedTracks().build();
@@ -51,10 +55,20 @@ public class SpotifyTrackService {
     public void likeTracks(List<String> ids) {
         SaveTracksForUserRequest request = spotifyApi.saveTracksForUser(ids.toArray(String[]::new)).build();
         executeRequest(request);
+        TracksLikedMessage message = TracksLikedMessage.builder()
+                .spotifyIds(ids)
+                .spotifyAction(SpotifyAction.ADDED)
+                .build();
+        tracksLikedMessageProducer.produce(message);
     }
 
     public void removeLikedTracks(List<String> ids) {
         RemoveUsersSavedTracksRequest request = spotifyApi.removeUsersSavedTracks(ids.toArray(String[]::new)).build();
         executeRequest(request);
+        TracksLikedMessage message = TracksLikedMessage.builder()
+                .spotifyIds(ids)
+                .spotifyAction(SpotifyAction.REMOVED)
+                .build();
+        tracksLikedMessageProducer.produce(message);
     }
 }

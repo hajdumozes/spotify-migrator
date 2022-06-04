@@ -1,5 +1,4 @@
 - add tracks to playlists
-- persist playlists on tag manager
 - controller advice for missing token
 - refresh token usage
 - replace produce spotify track with message object

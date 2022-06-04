@@ -30,7 +30,7 @@ public class EventProducerConfig {
     }
 
     @Bean
-    Supplier<Flux<TracksLikedMessage>> produceTracksLikedMessage(Sinks.Many<TracksLikedMessage> tracksLikedMessageMany) {
+    Supplier<Flux<TracksLikedMessage>> produceTracksLiked(Sinks.Many<TracksLikedMessage> tracksLikedMessageMany) {
         return tracksLikedMessageMany::asFlux;
     }
 
@@ -40,7 +40,7 @@ public class EventProducerConfig {
     }
 
     @Bean
-    Supplier<Flux<PlaylistCreatedMessage>> producePlaylistCreatedMessage(Sinks.Many<PlaylistCreatedMessage> playlistCreatedMessageMany) {
+    Supplier<Flux<PlaylistCreatedMessage>> producePlaylistCreated(Sinks.Many<PlaylistCreatedMessage> playlistCreatedMessageMany) {
         return playlistCreatedMessageMany::asFlux;
     }
 

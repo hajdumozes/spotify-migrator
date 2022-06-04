@@ -5,6 +5,8 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,7 +14,7 @@ import java.util.Optional;
 @FeignClient(value = "audio-tag-manager", url = "${client.audio-tag-manager-url}")
 public interface AudioTagManagerClient {
 
-    @GetMapping(value = "/audio-tags", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/audio-tag", produces = MediaType.APPLICATION_JSON_VALUE)
     List<AudioTag> getAudioTags();
 
     @GetMapping(value = "/audio-tag/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -23,4 +25,7 @@ public interface AudioTagManagerClient {
 
     @GetMapping(value = "/audio-tag/connected", produces = MediaType.APPLICATION_JSON_VALUE)
     List<AudioTag> getConnectedAudioTags();
+
+    @PostMapping(value = "/audio-tag/find", consumes = MediaType.APPLICATION_JSON_VALUE)
+    List<AudioTag> find(@RequestBody AudioTagQuery audioTagQuery);
 }

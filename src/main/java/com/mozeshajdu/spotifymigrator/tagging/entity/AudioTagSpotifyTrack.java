@@ -8,14 +8,22 @@ import java.util.List;
 
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class AudioTag {
+public class AudioTagSpotifyTrack {
     Long id;
-    String title;
-    String year;
+
+    String spotifyId;
+
+    String name;
+
     String album;
+
+    String releaseDate;
+
     List<Artist> artists;
-    List<AlbumArtist> albumArtists;
-    List<Genre> genres;
-    String rating;
-    AudioTagSpotifyTrack spotifyTrack;
+
+    Integer popularity;
+
+    String trackNumber;
+
+    String url;
 }

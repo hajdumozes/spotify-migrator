@@ -1,4 +1,4 @@
-- like tracks on condition (rating > x)
-- save info, that track is liked in audio-tag-manager
+- add tracks to playlists
+- persist playlists on tag manager
 - controller advice for missing token
 - refresh token usage

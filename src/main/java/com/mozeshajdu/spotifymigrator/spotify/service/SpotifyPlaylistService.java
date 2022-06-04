@@ -1,7 +1,8 @@
 package com.mozeshajdu.spotifymigrator.spotify.service;
 
-import com.mozeshajdu.spotifymigrator.spotify.entity.Playlist;
+import com.mozeshajdu.spotifymigrator.spotify.entity.SpotifyPlaylist;
 import com.mozeshajdu.spotifymigrator.spotify.mapper.PlaylistMapper;
+import com.mozeshajdu.spotifymigrator.tagging.event.PlaylistCreatedMessageProducer;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -24,14 +25,16 @@ import static com.mozeshajdu.spotifymigrator.spotify.util.SpotifyApiUtil.execute
 public class SpotifyPlaylistService {
     SpotifyApi spotifyApi;
     PlaylistMapper playlistMapper;
+    PlaylistCreatedMessageProducer playlistCreatedMessageProducer;
 
     public void createPlaylist(String name) {
         User currentUser = getUserProfile();
         CreatePlaylistRequest request = spotifyApi.createPlaylist(currentUser.getId(), name).build();
-        executeRequest(request);
+        SpotifyPlaylist spotifyPlaylistCreated = playlistMapper.of(executeRequest(request));
+        playlistCreatedMessageProducer.produce(playlistMapper.of(spotifyPlaylistCreated));
     }
 
-    public List<Playlist> getPlaylists() {
+    public List<SpotifyPlaylist> getPlaylists() {
         User currentUser = getUserProfile();
         GetListOfUsersPlaylistsRequest request = spotifyApi.getListOfUsersPlaylists(currentUser.getId()).build();
         return Arrays.stream(executeRequest(request).getItems()).map(playlistMapper::of).collect(Collectors.toList());

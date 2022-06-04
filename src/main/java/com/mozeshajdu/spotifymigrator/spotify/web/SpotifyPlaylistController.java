@@ -1,6 +1,6 @@
 package com.mozeshajdu.spotifymigrator.spotify.web;
 
-import com.mozeshajdu.spotifymigrator.spotify.entity.Playlist;
+import com.mozeshajdu.spotifymigrator.spotify.entity.SpotifyPlaylist;
 import com.mozeshajdu.spotifymigrator.spotify.service.SpotifyPlaylistService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -22,8 +22,8 @@ import java.util.List;
 public class SpotifyPlaylistController {
     SpotifyPlaylistService spotifyPlaylistService;
 
-    @GetMapping()
-    public ResponseEntity<List<Playlist>> getPlaylists() {
+    @GetMapping
+    public ResponseEntity<List<SpotifyPlaylist>> getPlaylists() {
         return ResponseEntity.ok(spotifyPlaylistService.getPlaylists());
     }
 

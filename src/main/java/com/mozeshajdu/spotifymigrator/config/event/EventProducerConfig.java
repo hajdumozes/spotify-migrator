@@ -1,7 +1,8 @@
 package com.mozeshajdu.spotifymigrator.config.event;
 
 import com.mozeshajdu.spotifymigrator.spotify.entity.SpotifyTrack;
-import com.mozeshajdu.spotifymigrator.spotify.entity.TracksLikedMessage;
+import com.mozeshajdu.spotifymigrator.spotify.entity.event.PlaylistCreatedMessage;
+import com.mozeshajdu.spotifymigrator.spotify.entity.event.TracksLikedMessage;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import reactor.core.publisher.Flux;
@@ -30,5 +31,15 @@ public class EventProducerConfig {
     @Bean
     Supplier<Flux<TracksLikedMessage>> produceTracksLikedMessage(Sinks.Many<TracksLikedMessage> tracksLikedMessageSink) {
         return tracksLikedMessageSink::asFlux;
+    }
+
+    @Bean
+    public Sinks.Many<PlaylistCreatedMessage> playlistCreatedMessageSink() {
+        return Sinks.many().unicast().onBackpressureBuffer();
+    }
+
+    @Bean
+    Supplier<Flux<PlaylistCreatedMessage>> producePlaylistCreatedMessage(Sinks.Many<PlaylistCreatedMessage> playlistCreatedMessageSink) {
+        return playlistCreatedMessageSink::asFlux;
     }
 }

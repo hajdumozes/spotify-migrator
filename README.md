@@ -15,3 +15,4 @@ Migration stands for the following: following users, following albums, like trac
 | `KAFKA_SERVER`                            | string   |                                                    |  |
 | `KAFKA_SPOTIFY_TRACK_TOPIC`               | string   |                                                    |  |
 | `KAFKA_TRACK_LIKED_TOPIC`                 | string   |                                                    |  |
+| `KAFKA_PLAYLIST_CREATED_TOPIC`            | string   |                                                    |  |

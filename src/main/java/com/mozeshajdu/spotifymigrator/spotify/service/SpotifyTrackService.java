@@ -2,7 +2,7 @@ package com.mozeshajdu.spotifymigrator.spotify.service;
 
 import com.mozeshajdu.spotifymigrator.spotify.entity.LikedTrack;
 import com.mozeshajdu.spotifymigrator.spotify.entity.SpotifyAction;
-import com.mozeshajdu.spotifymigrator.spotify.entity.TracksLikedMessage;
+import com.mozeshajdu.spotifymigrator.spotify.entity.event.TracksLikedMessage;
 import com.mozeshajdu.spotifymigrator.spotify.mapper.SpotifyTrackMapper;
 import com.mozeshajdu.spotifymigrator.tagging.client.AudioTagManagerClient;
 import com.mozeshajdu.spotifymigrator.tagging.client.AudioTagQuery;

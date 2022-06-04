@@ -1,5 +1,6 @@
 package com.mozeshajdu.spotifymigrator.spotify.web;
 
+import com.mozeshajdu.spotifymigrator.spotify.entity.Playlist;
 import com.mozeshajdu.spotifymigrator.spotify.service.SpotifyPlaylistService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -11,7 +12,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import se.michaelthelin.spotify.model_objects.specification.PlaylistSimplified;
 
 import java.util.List;
 
@@ -23,7 +23,7 @@ public class SpotifyPlaylistController {
     SpotifyPlaylistService spotifyPlaylistService;
 
     @GetMapping()
-    public ResponseEntity<List<PlaylistSimplified>> getPlaylists() {
+    public ResponseEntity<List<Playlist>> getPlaylists() {
         return ResponseEntity.ok(spotifyPlaylistService.getPlaylists());
     }
 

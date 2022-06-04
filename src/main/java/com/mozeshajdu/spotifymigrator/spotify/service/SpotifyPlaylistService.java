@@ -1,14 +1,17 @@
 package com.mozeshajdu.spotifymigrator.spotify.service;
 
 import com.mozeshajdu.spotifymigrator.spotify.entity.SpotifyPlaylist;
+import com.mozeshajdu.spotifymigrator.spotify.entity.event.PlaylistDeletedMessage;
 import com.mozeshajdu.spotifymigrator.spotify.mapper.PlaylistMapper;
 import com.mozeshajdu.spotifymigrator.tagging.event.PlaylistCreatedMessageProducer;
+import com.mozeshajdu.spotifymigrator.tagging.event.PlaylistDeletedMessageProducer;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 import se.michaelthelin.spotify.SpotifyApi;
 import se.michaelthelin.spotify.model_objects.specification.User;
+import se.michaelthelin.spotify.requests.data.follow.UnfollowPlaylistRequest;
 import se.michaelthelin.spotify.requests.data.playlists.CreatePlaylistRequest;
 import se.michaelthelin.spotify.requests.data.playlists.GetListOfUsersPlaylistsRequest;
 import se.michaelthelin.spotify.requests.data.users_profile.GetCurrentUsersProfileRequest;
@@ -26,6 +29,7 @@ public class SpotifyPlaylistService {
     SpotifyApi spotifyApi;
     PlaylistMapper playlistMapper;
     PlaylistCreatedMessageProducer playlistCreatedMessageProducer;
+    PlaylistDeletedMessageProducer playlistDeletedMessageProducer;
 
     public void createPlaylist(String name) {
         User currentUser = getUserProfile();
@@ -38,6 +42,12 @@ public class SpotifyPlaylistService {
         User currentUser = getUserProfile();
         GetListOfUsersPlaylistsRequest request = spotifyApi.getListOfUsersPlaylists(currentUser.getId()).build();
         return Arrays.stream(executeRequest(request).getItems()).map(playlistMapper::of).collect(Collectors.toList());
+    }
+
+    public void deletePlaylist(String spotifyId) {
+        UnfollowPlaylistRequest request = spotifyApi.unfollowPlaylist(spotifyId).build();
+        executeRequest(request);
+        playlistDeletedMessageProducer.produce(new PlaylistDeletedMessage(spotifyId));
     }
 
     private User getUserProfile() {

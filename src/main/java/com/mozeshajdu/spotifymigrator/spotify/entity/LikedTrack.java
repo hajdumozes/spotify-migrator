@@ -17,4 +17,5 @@ public class LikedTrack {
     Integer popularity;
     String trackNumber;
     String url;
+    String uri;
 }

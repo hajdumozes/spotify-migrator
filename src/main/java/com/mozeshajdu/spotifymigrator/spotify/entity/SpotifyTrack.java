@@ -17,5 +17,6 @@ public class SpotifyTrack {
     Integer popularity;
     String trackNumber;
     String url;
+    String uri;
     Long audioTagId;
 }

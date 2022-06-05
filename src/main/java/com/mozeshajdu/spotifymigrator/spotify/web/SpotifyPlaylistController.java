@@ -29,15 +29,21 @@ public class SpotifyPlaylistController {
         return ResponseEntity.ok(spotifyPlaylistService.getPlaylists());
     }
 
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Void> createPlaylist(@RequestBody String name) {
+        spotifyPlaylistService.createPlaylist(name);
+        return ResponseEntity.ok().build();
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePlaylist(@PathVariable String id) {
         spotifyPlaylistService.deletePlaylist(id);
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> createPlaylist(@RequestBody String name) {
-        spotifyPlaylistService.createPlaylist(name);
+    @PostMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Void> addToPlaylist(@PathVariable String id, @RequestBody List<String> spotifyIds) {
+        spotifyPlaylistService.addToPlaylist(id, spotifyIds);
         return ResponseEntity.ok().build();
     }
 }

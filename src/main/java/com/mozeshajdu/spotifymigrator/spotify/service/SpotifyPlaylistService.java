@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import se.michaelthelin.spotify.SpotifyApi;
 import se.michaelthelin.spotify.model_objects.specification.User;
 import se.michaelthelin.spotify.requests.data.follow.UnfollowPlaylistRequest;
+import se.michaelthelin.spotify.requests.data.playlists.AddItemsToPlaylistRequest;
 import se.michaelthelin.spotify.requests.data.playlists.CreatePlaylistRequest;
 import se.michaelthelin.spotify.requests.data.playlists.GetListOfUsersPlaylistsRequest;
 import se.michaelthelin.spotify.requests.data.users_profile.GetCurrentUsersProfileRequest;
@@ -48,6 +49,11 @@ public class SpotifyPlaylistService {
         UnfollowPlaylistRequest request = spotifyApi.unfollowPlaylist(spotifyId).build();
         executeRequest(request);
         playlistDeletedMessageProducer.produce(new PlaylistDeletedMessage(spotifyId));
+    }
+
+    public void addToPlaylist(String playlistId, List<String> spotifyIds) {
+        AddItemsToPlaylistRequest request = spotifyApi.addItemsToPlaylist(playlistId, spotifyIds.toArray(String[]::new)).build();
+        executeRequest(request);
     }
 
     private User getUserProfile() {

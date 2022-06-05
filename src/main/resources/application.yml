@@ -9,12 +9,13 @@ client:
 spring:
   cloud.stream:
     function:
-      definition: produceSpotifyTracks;produceTracksLiked;producePlaylistCreated;producePlaylistDeleted
+      definition: produceSpotifyTracks;produceTracksLiked;producePlaylistCreated;producePlaylistDeleted;producePlaylistItemAdded
       bindings:
         produceSpotifyTracks-out-0: spotify-track-created
         produceTracksLiked-out-0: liked-tracks
         producePlaylistCreated-out-0: playlist-created
         producePlaylistDeleted-out-0: playlist-deleted
+        producePlaylistItemAdded-out-0: playlist-item-added
     bindings:
       spotify-track-created:
         destination: ${KAFKA_SPOTIFY_TRACK_TOPIC:spotify-track-created}
@@ -24,6 +25,8 @@ spring:
         destination: ${KAFKA_PLAYLIST_CREATED_TOPIC:playlist-created}
       playlist-deleted:
         destination: ${KAFKA_PLAYLIST_DELETED_TOPIC:playlist-deleted}
+      playlist-item-added:
+        destination: ${KAFKA_PLAYLIST_ITEM_ADDED_TOPIC:playlist-item-added}
     default-binder: kafka
     kafka:
       binder:

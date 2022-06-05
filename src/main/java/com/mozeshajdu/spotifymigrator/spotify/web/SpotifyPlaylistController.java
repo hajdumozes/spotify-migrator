@@ -42,8 +42,8 @@ public class SpotifyPlaylistController {
     }
 
     @PostMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> addToPlaylist(@PathVariable String id, @RequestBody List<String> spotifyIds) {
-        spotifyPlaylistService.addToPlaylist(id, spotifyIds);
+    public ResponseEntity<Void> addToPlaylist(@PathVariable String id, @RequestBody List<String> spotifyUris) {
+        spotifyPlaylistService.addToPlaylist(id, spotifyUris);
         return ResponseEntity.ok().build();
     }
 }

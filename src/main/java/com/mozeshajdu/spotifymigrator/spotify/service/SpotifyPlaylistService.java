@@ -2,9 +2,11 @@ package com.mozeshajdu.spotifymigrator.spotify.service;
 
 import com.mozeshajdu.spotifymigrator.spotify.entity.SpotifyPlaylist;
 import com.mozeshajdu.spotifymigrator.spotify.entity.event.PlaylistDeletedMessage;
+import com.mozeshajdu.spotifymigrator.spotify.entity.event.PlaylistItemAddedMessage;
 import com.mozeshajdu.spotifymigrator.spotify.mapper.PlaylistMapper;
 import com.mozeshajdu.spotifymigrator.tagging.event.PlaylistCreatedMessageProducer;
 import com.mozeshajdu.spotifymigrator.tagging.event.PlaylistDeletedMessageProducer;
+import com.mozeshajdu.spotifymigrator.tagging.event.PlaylistItemAddedMessageProducer;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -31,6 +33,7 @@ public class SpotifyPlaylistService {
     PlaylistMapper playlistMapper;
     PlaylistCreatedMessageProducer playlistCreatedMessageProducer;
     PlaylistDeletedMessageProducer playlistDeletedMessageProducer;
+    PlaylistItemAddedMessageProducer playlistItemAddedMessageProducer;
 
     public void createPlaylist(String name) {
         User currentUser = getUserProfile();
@@ -51,9 +54,10 @@ public class SpotifyPlaylistService {
         playlistDeletedMessageProducer.produce(new PlaylistDeletedMessage(spotifyId));
     }
 
-    public void addToPlaylist(String playlistId, List<String> spotifyIds) {
-        AddItemsToPlaylistRequest request = spotifyApi.addItemsToPlaylist(playlistId, spotifyIds.toArray(String[]::new)).build();
+    public void addToPlaylist(String playlistId, List<String> spotifyUris) {
+        AddItemsToPlaylistRequest request = spotifyApi.addItemsToPlaylist(playlistId, spotifyUris.toArray(String[]::new)).build();
         executeRequest(request);
+        playlistItemAddedMessageProducer.produce(new PlaylistItemAddedMessage(playlistId, spotifyUris));
     }
 
     private User getUserProfile() {

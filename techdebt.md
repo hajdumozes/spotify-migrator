@@ -1,4 +1,4 @@
-- multiline yaml
+- add items to playlist by grouping
 - controller advice for missing token
 - refresh token usage
 - replace produce spotify track with message object

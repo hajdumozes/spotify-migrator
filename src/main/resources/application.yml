@@ -10,10 +10,10 @@ spring:
   cloud.stream:
     function:
       definition:
-        "produceSpotifyTracks;/
-        produceTracksLiked;/
-        producePlaylistCreated;/
-        producePlaylistDeleted;/
+        "produceSpotifyTracks;\
+        produceTracksLiked;\
+        producePlaylistCreated;\
+        producePlaylistDeleted;\
         producePlaylistItemAdded"
       bindings:
         produceSpotifyTracks-out-0: spotify-track-created

@@ -51,6 +51,11 @@ public class TagService {
                 .collect(Collectors.toList());
     }
 
+    public void updateSpotifyTracks() {
+        audioTagManagerClient.getSpotifyTracks()
+                .forEach(spotifyTrack -> syncTrackWithTag(spotifyTrack.getSpotifyId(), spotifyTrack.getAudioTagId()));
+    }
+
     public void syncTrackWithTag(String spotifyId, Long audioTagId) {
         SpotifyTrack track = spotifySearcher.getById(spotifyId, audioTagId);
         spotifyTrackProducer.produce(track);

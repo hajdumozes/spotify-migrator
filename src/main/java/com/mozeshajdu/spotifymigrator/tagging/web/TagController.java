@@ -43,6 +43,12 @@ public class TagController {
         return ResponseEntity.ok().build();
     }
 
+    @GetMapping(value = "/sync-track")
+    public ResponseEntity<Void> updateSpotifyTracks() {
+        tagService.updateSpotifyTracks();
+        return ResponseEntity.ok().build();
+    }
+
     @GetMapping(value = "/sync-track/{spotifyId}/{audioTagId}")
     public ResponseEntity<Void> addToAudioTag(@PathVariable String spotifyId, @PathVariable Long audioTagId) {
         tagService.syncTrackWithTag(spotifyId, audioTagId);

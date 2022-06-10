@@ -26,4 +26,6 @@ public class AudioTagSpotifyTrack {
     String trackNumber;
 
     String url;
+
+    Long audioTagId;
 }

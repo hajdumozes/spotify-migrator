@@ -1,6 +1,7 @@
 package com.mozeshajdu.spotifymigrator.tagging.client;
 
 import com.mozeshajdu.spotifymigrator.tagging.entity.AudioTag;
+import com.mozeshajdu.spotifymigrator.tagging.entity.AudioTagSpotifyTrack;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,4 +29,7 @@ public interface AudioTagManagerClient {
 
     @PostMapping(value = "/audio-tag/find", consumes = MediaType.APPLICATION_JSON_VALUE)
     List<AudioTag> find(@RequestBody AudioTagQuery audioTagQuery);
+
+    @GetMapping(value = "/spotify-track", produces = MediaType.APPLICATION_JSON_VALUE)
+    List<AudioTagSpotifyTrack> getSpotifyTracks();
 }

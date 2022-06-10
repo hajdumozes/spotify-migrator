@@ -4,6 +4,10 @@ import com.mozeshajdu.spotifymigrator.spotify.entity.SpotifyPlaylist;
 import com.mozeshajdu.spotifymigrator.spotify.entity.event.PlaylistDeletedMessage;
 import com.mozeshajdu.spotifymigrator.spotify.entity.event.PlaylistItemAddedMessage;
 import com.mozeshajdu.spotifymigrator.spotify.mapper.PlaylistMapper;
+import com.mozeshajdu.spotifymigrator.tagging.client.AudioTagManagerClient;
+import com.mozeshajdu.spotifymigrator.tagging.client.AudioTagQuery;
+import com.mozeshajdu.spotifymigrator.tagging.entity.AudioTag;
+import com.mozeshajdu.spotifymigrator.tagging.entity.AudioTagSpotifyTrack;
 import com.mozeshajdu.spotifymigrator.tagging.event.PlaylistCreatedMessageProducer;
 import com.mozeshajdu.spotifymigrator.tagging.event.PlaylistDeletedMessageProducer;
 import com.mozeshajdu.spotifymigrator.tagging.event.PlaylistItemAddedMessageProducer;
@@ -31,6 +35,7 @@ import static com.mozeshajdu.spotifymigrator.spotify.util.SpotifyApiUtil.execute
 public class SpotifyPlaylistService {
     SpotifyApi spotifyApi;
     PlaylistMapper playlistMapper;
+    AudioTagManagerClient audioTagManagerClient;
     PlaylistCreatedMessageProducer playlistCreatedMessageProducer;
     PlaylistDeletedMessageProducer playlistDeletedMessageProducer;
     PlaylistItemAddedMessageProducer playlistItemAddedMessageProducer;
@@ -58,6 +63,16 @@ public class SpotifyPlaylistService {
         AddItemsToPlaylistRequest request = spotifyApi.addItemsToPlaylist(playlistId, spotifyUris.toArray(String[]::new)).build();
         executeRequest(request);
         playlistItemAddedMessageProducer.produce(new PlaylistItemAddedMessage(playlistId, spotifyUris));
+    }
+
+    public void addToPlaylist(String playlistId, AudioTagQuery audioTagQuery) {
+        List<String> uris = audioTagManagerClient.find(audioTagQuery).stream()
+                .map(AudioTag::getSpotifyTrack)
+                .map(AudioTagSpotifyTrack::getUri)
+                .collect(Collectors.toList());
+        AddItemsToPlaylistRequest request = spotifyApi.addItemsToPlaylist(playlistId, uris.toArray(String[]::new)).build();
+        executeRequest(request);
+        playlistItemAddedMessageProducer.produce(new PlaylistItemAddedMessage(playlistId, uris));
     }
 
     private User getUserProfile() {

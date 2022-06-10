@@ -2,6 +2,7 @@ package com.mozeshajdu.spotifymigrator.spotify.web;
 
 import com.mozeshajdu.spotifymigrator.spotify.entity.SpotifyPlaylist;
 import com.mozeshajdu.spotifymigrator.spotify.service.SpotifyPlaylistService;
+import com.mozeshajdu.spotifymigrator.tagging.client.AudioTagQuery;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -44,6 +45,12 @@ public class SpotifyPlaylistController {
     @PostMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> addToPlaylist(@PathVariable String id, @RequestBody List<String> spotifyUris) {
         spotifyPlaylistService.addToPlaylist(id, spotifyUris);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping(value = "/{id}/tag", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Void> addToPlaylist(@PathVariable String id, @RequestBody AudioTagQuery audioTagQuery) {
+        spotifyPlaylistService.addToPlaylist(id, audioTagQuery);
         return ResponseEntity.ok().build();
     }
 }

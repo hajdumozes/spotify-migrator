@@ -86,4 +86,14 @@ public class SpotifyTrackService {
                 .build();
         tracksLikedMessageProducer.produce(message);
     }
+
+    public void removeLikedTracksByQuery(AudioTagQuery audioTagQuery) {
+        List<String> ids = audioTagManagerClient.find(audioTagQuery)
+                .stream()
+                .map(AudioTag::getSpotifyTrack)
+                .filter(Objects::nonNull)
+                .map(AudioTagSpotifyTrack::getSpotifyId)
+                .collect(Collectors.toList());
+        removeLikedTracks(ids);
+    }
 }

@@ -15,21 +15,15 @@ import java.util.Optional;
 @FeignClient(value = "audio-tag-manager", url = "${client.audio-tag-manager-url}")
 public interface AudioTagManagerClient {
 
-    @GetMapping(value = "/audio-tag", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/audio-tags", produces = MediaType.APPLICATION_JSON_VALUE)
     List<AudioTag> getAudioTags();
 
-    @GetMapping(value = "/audio-tag/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/audio-tags/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     Optional<AudioTag> getAudioTagById(@PathVariable Long id);
 
-    @GetMapping(value = "/audio-tag/disconnected", produces = MediaType.APPLICATION_JSON_VALUE)
-    List<AudioTag> getDisconnectedAudioTags();
-
-    @GetMapping(value = "/audio-tag/connected", produces = MediaType.APPLICATION_JSON_VALUE)
-    List<AudioTag> getConnectedAudioTags();
-
-    @PostMapping(value = "/audio-tag/find", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/audio-tags/query", consumes = MediaType.APPLICATION_JSON_VALUE)
     List<AudioTag> find(@RequestBody AudioTagQuery audioTagQuery);
 
-    @GetMapping(value = "/spotify-track", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/spotify-tracks", produces = MediaType.APPLICATION_JSON_VALUE)
     List<AudioTagSpotifyTrack> getSpotifyTracks();
 }

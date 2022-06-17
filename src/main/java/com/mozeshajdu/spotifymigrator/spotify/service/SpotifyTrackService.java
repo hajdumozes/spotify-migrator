@@ -47,7 +47,10 @@ public class SpotifyTrackService {
 
     public List<LikedTrack> getDisconnectedLikedTracks() {
         List<LikedTrack> likedTracks = getLikedTracks();
-        List<String> spotifyTracksInCollection = audioTagManagerClient.getConnectedAudioTags().stream()
+        List<AudioTag> audioTagsWithSpotifyConnection = audioTagManagerClient.find(AudioTagQuery.builder()
+                .spotifyTrackPresence(true)
+                .build());
+        List<String> spotifyTracksInCollection = audioTagsWithSpotifyConnection.stream()
                 .map(AudioTag::getSpotifyTrack)
                 .filter(Objects::nonNull)
                 .map(AudioTagSpotifyTrack::getSpotifyId)

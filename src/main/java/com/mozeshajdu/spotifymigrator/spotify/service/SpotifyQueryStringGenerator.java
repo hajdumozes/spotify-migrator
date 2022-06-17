@@ -1,6 +1,6 @@
 package com.mozeshajdu.spotifymigrator.spotify.service;
 
-import com.mozeshajdu.spotifymigrator.spotify.entity.SearchParameter;
+import com.mozeshajdu.spotifymigrator.spotify.entity.SpotifySearchParameter;
 import com.mozeshajdu.spotifymigrator.tagging.entity.AudioTag;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Component;
@@ -15,8 +15,8 @@ public class SpotifyQueryStringGenerator {
     public static final String SPOTIFY_SEARCH_PARAM_FORMAT = "%s:%s";
     public static final String APOSTROPHE = "'";
 
-    public String generateFrom(List<SearchParameter> searchParameters, AudioTag audioTag) {
-        return searchParameters.stream()
+    public String generateFrom(List<SpotifySearchParameter> spotifySearchParameters, AudioTag audioTag) {
+        return spotifySearchParameters.stream()
                 .map(searchParameter -> getQueryPart(searchParameter.getSearchField(), searchParameter.getFieldValueGetter().apply(audioTag)))
                 .collect(Collectors.joining(SPOTIFY_QUERY_DELIMITER));
     }

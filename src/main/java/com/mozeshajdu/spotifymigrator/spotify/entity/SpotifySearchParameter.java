@@ -11,7 +11,7 @@ import java.util.function.Function;
 @Getter
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public enum SearchParameter {
+public enum SpotifySearchParameter {
     TITLE("track", AudioTag::getTitle),
     ARTIST("artist", tag -> tag.getArtists().get(0).getName()),
     YEAR("year", AudioTag::getYear),

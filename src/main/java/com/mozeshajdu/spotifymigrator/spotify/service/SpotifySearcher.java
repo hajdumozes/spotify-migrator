@@ -1,6 +1,6 @@
 package com.mozeshajdu.spotifymigrator.spotify.service;
 
-import com.mozeshajdu.spotifymigrator.spotify.entity.SearchParameter;
+import com.mozeshajdu.spotifymigrator.spotify.entity.SpotifySearchParameter;
 import com.mozeshajdu.spotifymigrator.spotify.entity.SpotifyTrack;
 import com.mozeshajdu.spotifymigrator.spotify.mapper.SpotifyTrackMapper;
 import com.mozeshajdu.spotifymigrator.tagging.entity.AudioTag;
@@ -46,23 +46,23 @@ public class SpotifySearcher {
         return spotifyTrackMapper.toSpotifyTrack(result, audioTagId);
     }
 
-    public List<SpotifyTrack> search(AudioTag audioTag, List<SearchParameter> searchParameters) {
+    public List<SpotifyTrack> search(AudioTag audioTag, List<SpotifySearchParameter> spotifySearchParameters) {
         ClientCredentialsRequest credentialsRequest = spotifyApi.clientCredentials().build();
         ClientCredentials credentials = executeRequest(credentialsRequest);
         spotifyApi.setAccessToken(credentials.getAccessToken());
-        SearchTracksRequest request = getRequest(searchParameters, audioTag);
+        SearchTracksRequest request = getRequest(spotifySearchParameters, audioTag);
         Paging<Track> result = executeRequest(request);
         return toSpotifyTracks(audioTag, result);
     }
 
-    public Optional<SpotifyTrack> getMostPopularForTag(AudioTag audioTag, List<SearchParameter> searchParameters) {
-        List<SpotifyTrack> spotifyTracks = search(audioTag, searchParameters);
+    public Optional<SpotifyTrack> getMostPopularForTag(AudioTag audioTag, List<SpotifySearchParameter> spotifySearchParameters) {
+        List<SpotifyTrack> spotifyTracks = search(audioTag, spotifySearchParameters);
         return filterMostPopular(spotifyTracks, audioTag);
     }
 
 
-    private SearchTracksRequest getRequest(List<SearchParameter> searchParameters, AudioTag audioTag) {
-        return spotifyApi.searchTracks(searchTrackQueryParam.generateFrom(searchParameters, audioTag))
+    private SearchTracksRequest getRequest(List<SpotifySearchParameter> spotifySearchParameters, AudioTag audioTag) {
+        return spotifyApi.searchTracks(searchTrackQueryParam.generateFrom(spotifySearchParameters, audioTag))
                 .market(CountryCode.HU)
                 .build();
     }

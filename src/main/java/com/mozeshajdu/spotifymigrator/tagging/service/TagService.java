@@ -1,9 +1,10 @@
 package com.mozeshajdu.spotifymigrator.tagging.service;
 
-import com.mozeshajdu.spotifymigrator.spotify.entity.SearchParameter;
+import com.mozeshajdu.spotifymigrator.spotify.entity.SpotifySearchParameter;
 import com.mozeshajdu.spotifymigrator.spotify.entity.SpotifyTrack;
 import com.mozeshajdu.spotifymigrator.spotify.service.SpotifySearcher;
 import com.mozeshajdu.spotifymigrator.tagging.client.AudioTagManagerClient;
+import com.mozeshajdu.spotifymigrator.tagging.client.AudioTagQuery;
 import com.mozeshajdu.spotifymigrator.tagging.entity.AudioTag;
 import com.mozeshajdu.spotifymigrator.tagging.event.SpotifyTrackProducer;
 import com.mozeshajdu.spotifymigrator.tagging.exception.AudioTagNotFoundException;
@@ -26,26 +27,26 @@ public class TagService {
     SpotifySearcher spotifySearcher;
     SpotifyTrackProducer spotifyTrackProducer;
 
-    public void produceSpotifyTracksForDisconnectedAudioTags(List<SearchParameter> searchParameters) {
-        List<AudioTag> audioTags = audioTagManagerClient.getDisconnectedAudioTags();
+    public void produceSpotifyTracksForAudioTags(List<SpotifySearchParameter> spotifySearchParameters, AudioTagQuery audioTagQuery) {
+        List<AudioTag> audioTags = audioTagManagerClient.find(audioTagQuery);
         audioTags.stream()
-                .map(audioTag -> spotifySearcher.getMostPopularForTag(audioTag, searchParameters))
+                .map(audioTag -> spotifySearcher.getMostPopularForTag(audioTag, spotifySearchParameters))
                 .flatMap(Optional::stream)
                 .forEach(spotifyTrackProducer::produce);
     }
 
-    public List<SpotifyTrack> searchDisconnected(List<SearchParameter> searchParameters) {
-        List<AudioTag> audioTags = audioTagManagerClient.getDisconnectedAudioTags();
+    public List<SpotifyTrack> queryByAudioTags(List<SpotifySearchParameter> spotifySearchParameters, AudioTagQuery audioTagQuery) {
+        List<AudioTag> audioTags = audioTagManagerClient.find(audioTagQuery);
         return audioTags.stream()
-                .map(audioTag -> spotifySearcher.search(audioTag, searchParameters))
+                .map(audioTag -> spotifySearcher.search(audioTag, spotifySearchParameters))
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
     }
 
-    public List<SpotifyTrack> searchTracksForTag(List<SearchParameter> searchParameters, Long audioTagId) {
+    public List<SpotifyTrack> queryByAudioTagId(List<SpotifySearchParameter> spotifySearchParameters, Long audioTagId) {
         AudioTag audioTag = audioTagManagerClient.getAudioTagById(audioTagId)
                 .orElseThrow(() -> new AudioTagNotFoundException(Long.toString(audioTagId)));
-        return spotifySearcher.search(audioTag, searchParameters)
+        return spotifySearcher.search(audioTag, spotifySearchParameters)
                 .stream()
                 .sorted(Comparator.comparing(SpotifyTrack::getPopularity, Comparator.reverseOrder()))
                 .collect(Collectors.toList());
@@ -53,10 +54,10 @@ public class TagService {
 
     public void updateSpotifyTracks() {
         audioTagManagerClient.getSpotifyTracks()
-                .forEach(spotifyTrack -> syncTrackWithTag(spotifyTrack.getSpotifyId(), spotifyTrack.getAudioTagId()));
+                .forEach(spotifyTrack -> connect(spotifyTrack.getSpotifyId(), spotifyTrack.getAudioTagId()));
     }
 
-    public void syncTrackWithTag(String spotifyId, Long audioTagId) {
+    public void connect(String spotifyId, Long audioTagId) {
         SpotifyTrack track = spotifySearcher.getById(spotifyId, audioTagId);
         spotifyTrackProducer.produce(track);
     }

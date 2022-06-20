@@ -1,7 +1,9 @@
 package com.mozeshajdu.spotifymigrator.spotify.service;
 
-import com.mozeshajdu.spotifymigrator.spotify.entity.SpotifySearchParameter;
+import com.mozeshajdu.spotifymigrator.spotify.SpotifyTrackQuery;
 import com.mozeshajdu.spotifymigrator.spotify.entity.ConnectedSpotifyTrack;
+import com.mozeshajdu.spotifymigrator.spotify.entity.SpotifySearchParameter;
+import com.mozeshajdu.spotifymigrator.spotify.entity.SpotifyTrack;
 import com.mozeshajdu.spotifymigrator.spotify.mapper.SpotifyTrackMapper;
 import com.mozeshajdu.spotifymigrator.tagging.entity.AudioTag;
 import com.neovisionaries.i18n.CountryCode;
@@ -36,9 +38,7 @@ public class SpotifySearcher {
     SpotifyTrackMapper spotifyTrackMapper;
 
     public ConnectedSpotifyTrack getById(String spotifyId, Long audioTagId) {
-        ClientCredentialsRequest credentialsRequest = spotifyApi.clientCredentials().build();
-        ClientCredentials credentials = executeRequest(credentialsRequest);
-        spotifyApi.setAccessToken(credentials.getAccessToken());
+        setClientCredential();
         GetTrackRequest request = spotifyApi.getTrack(spotifyId)
                 .market(CountryCode.HU)
                 .build();
@@ -47,12 +47,19 @@ public class SpotifySearcher {
     }
 
     public List<ConnectedSpotifyTrack> search(AudioTag audioTag, List<SpotifySearchParameter> spotifySearchParameters) {
-        ClientCredentialsRequest credentialsRequest = spotifyApi.clientCredentials().build();
-        ClientCredentials credentials = executeRequest(credentialsRequest);
-        spotifyApi.setAccessToken(credentials.getAccessToken());
-        SearchTracksRequest request = getRequest(spotifySearchParameters, audioTag);
+        setClientCredential();
+        String searchParams = searchTrackQueryParam.generateFrom(spotifySearchParameters, audioTag);
+        SearchTracksRequest request = getRequest(searchParams);
         Paging<Track> result = executeRequest(request);
         return toSpotifyTracks(audioTag, result);
+    }
+
+    public List<SpotifyTrack> query(SpotifyTrackQuery spotifyTrackQuery) {
+        setClientCredential();
+        String searchParams = searchTrackQueryParam.generateFrom(spotifyTrackQuery);
+        SearchTracksRequest request = getRequest(searchParams);
+        Paging<Track> result = executeRequest(request);
+        return Arrays.stream(result.getItems()).map(spotifyTrackMapper::toSpotifyTrack).collect(Collectors.toList());
     }
 
     public Optional<ConnectedSpotifyTrack> getMostPopularForTag(AudioTag audioTag, List<SpotifySearchParameter> spotifySearchParameters) {
@@ -60,9 +67,14 @@ public class SpotifySearcher {
         return filterMostPopular(connectedSpotifyTracks, audioTag);
     }
 
+    private void setClientCredential() {
+        ClientCredentialsRequest credentialsRequest = spotifyApi.clientCredentials().build();
+        ClientCredentials credentials = executeRequest(credentialsRequest);
+        spotifyApi.setAccessToken(credentials.getAccessToken());
+    }
 
-    private SearchTracksRequest getRequest(List<SpotifySearchParameter> spotifySearchParameters, AudioTag audioTag) {
-        return spotifyApi.searchTracks(searchTrackQueryParam.generateFrom(spotifySearchParameters, audioTag))
+    private SearchTracksRequest getRequest(String searchParams) {
+        return spotifyApi.searchTracks(searchParams)
                 .market(CountryCode.HU)
                 .build();
     }

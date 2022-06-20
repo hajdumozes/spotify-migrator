@@ -1,5 +1,6 @@
 package com.mozeshajdu.spotifymigrator.spotify.service;
 
+import com.mozeshajdu.spotifymigrator.spotify.SpotifyTrackQuery;
 import com.mozeshajdu.spotifymigrator.spotify.entity.SpotifySearchParameter;
 import com.mozeshajdu.spotifymigrator.tagging.entity.AudioTag;
 import org.apache.logging.log4j.util.Strings;
@@ -14,10 +15,21 @@ public class SpotifyQueryStringGenerator {
     public static final String SPOTIFY_QUERY_DELIMITER = " ";
     public static final String SPOTIFY_SEARCH_PARAM_FORMAT = "%s:%s";
     public static final String APOSTROPHE = "'";
+    public static final List<SpotifySearchParameter> DEFAULT_SEARCH_PARAMETERS = List.of(
+            SpotifySearchParameter.TITLE,
+            SpotifySearchParameter.ALBUM,
+            SpotifySearchParameter.ARTIST,
+            SpotifySearchParameter.YEAR);
 
     public String generateFrom(List<SpotifySearchParameter> spotifySearchParameters, AudioTag audioTag) {
         return spotifySearchParameters.stream()
-                .map(searchParameter -> getQueryPart(searchParameter.getSearchField(), searchParameter.getFieldValueGetter().apply(audioTag)))
+                .map(searchParameter -> getQueryPart(searchParameter.getSearchField(), searchParameter.getAudioTagFieldValueGetter().apply(audioTag)))
+                .collect(Collectors.joining(SPOTIFY_QUERY_DELIMITER));
+    }
+
+    public String generateFrom(SpotifyTrackQuery spotifyTrackQuery) {
+        return DEFAULT_SEARCH_PARAMETERS.stream()
+                .map(searchParameter -> getQueryPart(searchParameter.getSearchField(), searchParameter.getSpotifyTrackQueryFieldValueGetter().apply(spotifyTrackQuery)))
                 .collect(Collectors.joining(SPOTIFY_QUERY_DELIMITER));
     }
 

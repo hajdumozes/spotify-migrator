@@ -1,7 +1,7 @@
 package com.mozeshajdu.spotifymigrator.tagging.web;
 
 import com.mozeshajdu.spotifymigrator.spotify.entity.SpotifySearchParameter;
-import com.mozeshajdu.spotifymigrator.spotify.entity.SpotifyTrack;
+import com.mozeshajdu.spotifymigrator.spotify.entity.ConnectedSpotifyTrack;
 import com.mozeshajdu.spotifymigrator.tagging.service.TagService;
 import com.mozeshajdu.spotifymigrator.tagging.web.dto.QueryDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -29,14 +29,14 @@ public class TagQueryController {
 
     @Operation(summary = "Query spotify tracks by tags")
     @PostMapping(value = "/tracks", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<SpotifyTrack>> query(@RequestBody QueryDto queryDto) {
+    public ResponseEntity<List<ConnectedSpotifyTrack>> query(@RequestBody QueryDto queryDto) {
         return ResponseEntity.ok(tagService.queryByAudioTags(queryDto.getSpotifySearchParameters(), queryDto.getAudioTagQuery()));
     }
 
     @Operation(summary = "Query spotify tracks for audio tag")
     @PostMapping(value = "/{audioTagId}/tracks", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<SpotifyTrack>> queryByAudioTagId(@PathVariable Long audioTagId, @RequestBody List<SpotifySearchParameter> spotifySearchParameters) {
-        List<SpotifyTrack> result = tagService.queryByAudioTagId(spotifySearchParameters, audioTagId);
+    public ResponseEntity<List<ConnectedSpotifyTrack>> queryByAudioTagId(@PathVariable Long audioTagId, @RequestBody List<SpotifySearchParameter> spotifySearchParameters) {
+        List<ConnectedSpotifyTrack> result = tagService.queryByAudioTagId(spotifySearchParameters, audioTagId);
         return ResponseEntity.ok(result);
     }
 }

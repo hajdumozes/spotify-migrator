@@ -1,6 +1,6 @@
 package com.mozeshajdu.spotifymigrator.spotify.web;
 
-import com.mozeshajdu.spotifymigrator.spotify.entity.LikedTrack;
+import com.mozeshajdu.spotifymigrator.spotify.entity.SpotifyTrack;
 import com.mozeshajdu.spotifymigrator.spotify.service.SpotifyTrackService;
 import com.mozeshajdu.spotifymigrator.tagging.client.AudioTagQuery;
 import io.swagger.v3.oas.annotations.Operation;
@@ -28,39 +28,39 @@ public class SpotifyTrackController {
 
     @Operation(summary = "Get liked tracks")
     @GetMapping(value = "/me")
-    public ResponseEntity<List<LikedTrack>> getLikedTracks() {
+    public ResponseEntity<List<SpotifyTrack>> getLikedTracks() {
         return ResponseEntity.ok(spotifyTrackService.getLikedTracks());
     }
 
     @GetMapping(value = "/me/disconnected")
-    public ResponseEntity<List<LikedTrack>> getDisconnectedLikesTracks() {
+    public ResponseEntity<List<SpotifyTrack>> getDisconnectedLikesTracks() {
         return ResponseEntity.ok(spotifyTrackService.getDisconnectedLikedTracks());
     }
 
     @Operation(summary = "Like tracks by id")
     @PostMapping(value = "/me/add", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<LikedTrack>> likeTracks(@RequestBody List<String> ids) {
+    public ResponseEntity<List<SpotifyTrack>> likeTracks(@RequestBody List<String> ids) {
         spotifyTrackService.likeTracksById(ids);
         return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "Like tracks by tags")
     @PostMapping(value = "/me/add/tags", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<LikedTrack>> likeTracks(@RequestBody AudioTagQuery audioTagQuery) {
+    public ResponseEntity<List<SpotifyTrack>> likeTracks(@RequestBody AudioTagQuery audioTagQuery) {
         spotifyTrackService.likeTracksByQuery(audioTagQuery);
         return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "Remove liked tracks by id")
     @PostMapping(value = "/me/remove", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<LikedTrack>> removeLikedTracks(@RequestBody List<String> ids) {
+    public ResponseEntity<List<SpotifyTrack>> removeLikedTracks(@RequestBody List<String> ids) {
         spotifyTrackService.removeLikedTracks(ids);
         return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "Remove liked tracks by tags")
     @PostMapping(value = "/me/remove/tags", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<LikedTrack>> removeLikedTracks(@RequestBody AudioTagQuery audioTagQuery) {
+    public ResponseEntity<List<SpotifyTrack>> removeLikedTracks(@RequestBody AudioTagQuery audioTagQuery) {
         spotifyTrackService.removeLikedTracksByQuery(audioTagQuery);
         return ResponseEntity.ok().build();
     }

@@ -35,4 +35,4 @@ spring:
     default-binder: kafka
     kafka:
       binder:
-        brokers: ${KAFKA_SERVER}
+        brokers: ${KAFKA_SERVER:localhost:9093}

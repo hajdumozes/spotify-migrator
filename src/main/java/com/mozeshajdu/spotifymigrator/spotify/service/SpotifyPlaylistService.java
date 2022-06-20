@@ -1,6 +1,7 @@
 package com.mozeshajdu.spotifymigrator.spotify.service;
 
 import com.mozeshajdu.spotifymigrator.spotify.entity.SpotifyPlaylist;
+import com.mozeshajdu.spotifymigrator.spotify.entity.SpotifyPlaylistDetail;
 import com.mozeshajdu.spotifymigrator.spotify.entity.event.PlaylistDeletedMessage;
 import com.mozeshajdu.spotifymigrator.spotify.entity.event.PlaylistItemAddedMessage;
 import com.mozeshajdu.spotifymigrator.spotify.mapper.PlaylistMapper;
@@ -16,11 +17,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 import se.michaelthelin.spotify.SpotifyApi;
+import se.michaelthelin.spotify.model_objects.specification.Playlist;
 import se.michaelthelin.spotify.model_objects.specification.User;
 import se.michaelthelin.spotify.requests.data.follow.UnfollowPlaylistRequest;
 import se.michaelthelin.spotify.requests.data.playlists.AddItemsToPlaylistRequest;
 import se.michaelthelin.spotify.requests.data.playlists.CreatePlaylistRequest;
 import se.michaelthelin.spotify.requests.data.playlists.GetListOfUsersPlaylistsRequest;
+import se.michaelthelin.spotify.requests.data.playlists.GetPlaylistRequest;
 import se.michaelthelin.spotify.requests.data.users_profile.GetCurrentUsersProfileRequest;
 
 import java.util.Arrays;
@@ -43,8 +46,14 @@ public class SpotifyPlaylistService {
     public void createPlaylist(String name) {
         User currentUser = getUserProfile();
         CreatePlaylistRequest request = spotifyApi.createPlaylist(currentUser.getId(), name).build();
-        SpotifyPlaylist spotifyPlaylistCreated = playlistMapper.of(executeRequest(request));
+        SpotifyPlaylist spotifyPlaylistCreated = playlistMapper.toSpotifyPlaylist(executeRequest(request));
         playlistCreatedMessageProducer.produce(playlistMapper.of(spotifyPlaylistCreated));
+    }
+
+    public SpotifyPlaylistDetail getPlaylist(String id) {
+        GetPlaylistRequest request = spotifyApi.getPlaylist(id).build();
+        Playlist playlist = executeRequest(request);
+        return playlistMapper.toSpotifyPlaylistDetail(playlist);
     }
 
     public List<SpotifyPlaylist> getPlaylists() {

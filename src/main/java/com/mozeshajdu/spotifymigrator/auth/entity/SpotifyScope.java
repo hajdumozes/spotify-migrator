@@ -9,6 +9,7 @@ import lombok.experimental.FieldDefaults;
 @Getter
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public enum SpotifyScope {
+    PLAYLIST_READ_PRIVATE("playlist-read-private"),
     PLAYLIST_MODIFY_PRIVATE("playlist-modify-private"),
     PLAYLIST_MODIFY_PUBLIC("playlist-modify-public"),
     USER_LIBRARY_MODIFY("user-library-modify"),

@@ -1,7 +1,7 @@
 package com.mozeshajdu.spotifymigrator.tagging.service;
 
+import com.mozeshajdu.spotifymigrator.spotify.entity.ConnectedSpotifyTrack;
 import com.mozeshajdu.spotifymigrator.spotify.entity.SpotifySearchParameter;
-import com.mozeshajdu.spotifymigrator.spotify.entity.SpotifyTrack;
 import com.mozeshajdu.spotifymigrator.spotify.service.SpotifySearcher;
 import com.mozeshajdu.spotifymigrator.tagging.client.AudioTagManagerClient;
 import com.mozeshajdu.spotifymigrator.tagging.client.AudioTagQuery;
@@ -35,7 +35,7 @@ public class TagService {
                 .forEach(spotifyTrackProducer::produce);
     }
 
-    public List<SpotifyTrack> queryByAudioTags(List<SpotifySearchParameter> spotifySearchParameters, AudioTagQuery audioTagQuery) {
+    public List<ConnectedSpotifyTrack> queryByAudioTags(List<SpotifySearchParameter> spotifySearchParameters, AudioTagQuery audioTagQuery) {
         List<AudioTag> audioTags = audioTagManagerClient.find(audioTagQuery);
         return audioTags.stream()
                 .map(audioTag -> spotifySearcher.search(audioTag, spotifySearchParameters))
@@ -43,12 +43,12 @@ public class TagService {
                 .collect(Collectors.toList());
     }
 
-    public List<SpotifyTrack> queryByAudioTagId(List<SpotifySearchParameter> spotifySearchParameters, Long audioTagId) {
+    public List<ConnectedSpotifyTrack> queryByAudioTagId(List<SpotifySearchParameter> spotifySearchParameters, Long audioTagId) {
         AudioTag audioTag = audioTagManagerClient.getAudioTagById(audioTagId)
                 .orElseThrow(() -> new AudioTagNotFoundException(Long.toString(audioTagId)));
         return spotifySearcher.search(audioTag, spotifySearchParameters)
                 .stream()
-                .sorted(Comparator.comparing(SpotifyTrack::getPopularity, Comparator.reverseOrder()))
+                .sorted(Comparator.comparing(ConnectedSpotifyTrack::getPopularity, Comparator.reverseOrder()))
                 .collect(Collectors.toList());
     }
 
@@ -58,7 +58,7 @@ public class TagService {
     }
 
     public void connect(String spotifyId, Long audioTagId) {
-        SpotifyTrack track = spotifySearcher.getById(spotifyId, audioTagId);
+        ConnectedSpotifyTrack track = spotifySearcher.getById(spotifyId, audioTagId);
         spotifyTrackProducer.produce(track);
     }
 }

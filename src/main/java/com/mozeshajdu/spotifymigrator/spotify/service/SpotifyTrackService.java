@@ -1,6 +1,6 @@
 package com.mozeshajdu.spotifymigrator.spotify.service;
 
-import com.mozeshajdu.spotifymigrator.spotify.entity.LikedTrack;
+import com.mozeshajdu.spotifymigrator.spotify.entity.SpotifyTrack;
 import com.mozeshajdu.spotifymigrator.spotify.entity.SpotifyAction;
 import com.mozeshajdu.spotifymigrator.spotify.entity.event.TracksLikedMessage;
 import com.mozeshajdu.spotifymigrator.spotify.mapper.SpotifyTrackMapper;
@@ -36,17 +36,17 @@ public class SpotifyTrackService {
     AudioTagManagerClient audioTagManagerClient;
     TracksLikedMessageProducer tracksLikedMessageProducer;
 
-    public List<LikedTrack> getLikedTracks() {
+    public List<SpotifyTrack> getLikedTracks() {
         GetUsersSavedTracksRequest request = spotifyApi.getUsersSavedTracks().build();
         Paging<SavedTrack> savedTracks = executeRequest(request);
         return Arrays.stream(savedTracks.getItems())
                 .map(SavedTrack::getTrack)
-                .map(spotifyTrackMapper::toLikedTrack)
+                .map(spotifyTrackMapper::toSpotifyTrack)
                 .collect(Collectors.toList());
     }
 
-    public List<LikedTrack> getDisconnectedLikedTracks() {
-        List<LikedTrack> likedTracks = getLikedTracks();
+    public List<SpotifyTrack> getDisconnectedLikedTracks() {
+        List<SpotifyTrack> spotifyTracks = getLikedTracks();
         List<AudioTag> audioTagsWithSpotifyConnection = audioTagManagerClient.find(AudioTagQuery.builder()
                 .spotifyTrackPresence(true)
                 .build());
@@ -55,8 +55,8 @@ public class SpotifyTrackService {
                 .filter(Objects::nonNull)
                 .map(AudioTagSpotifyTrack::getSpotifyId)
                 .collect(Collectors.toList());
-        return likedTracks.stream()
-                .filter(likedTrack -> !spotifyTracksInCollection.contains(likedTrack.getSpotifyId()))
+        return spotifyTracks.stream()
+                .filter(spotifyTrack -> !spotifyTracksInCollection.contains(spotifyTrack.getSpotifyId()))
                 .collect(Collectors.toList());
     }
 

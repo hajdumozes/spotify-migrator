@@ -1,7 +1,7 @@
 package com.mozeshajdu.spotifymigrator.spotify.service;
 
 import com.mozeshajdu.spotifymigrator.spotify.entity.SpotifySearchParameter;
-import com.mozeshajdu.spotifymigrator.spotify.entity.SpotifyTrack;
+import com.mozeshajdu.spotifymigrator.spotify.entity.ConnectedSpotifyTrack;
 import com.mozeshajdu.spotifymigrator.spotify.mapper.SpotifyTrackMapper;
 import com.mozeshajdu.spotifymigrator.tagging.entity.AudioTag;
 import com.neovisionaries.i18n.CountryCode;
@@ -35,7 +35,7 @@ public class SpotifySearcher {
     SpotifyQueryStringGenerator searchTrackQueryParam;
     SpotifyTrackMapper spotifyTrackMapper;
 
-    public SpotifyTrack getById(String spotifyId, Long audioTagId) {
+    public ConnectedSpotifyTrack getById(String spotifyId, Long audioTagId) {
         ClientCredentialsRequest credentialsRequest = spotifyApi.clientCredentials().build();
         ClientCredentials credentials = executeRequest(credentialsRequest);
         spotifyApi.setAccessToken(credentials.getAccessToken());
@@ -43,10 +43,10 @@ public class SpotifySearcher {
                 .market(CountryCode.HU)
                 .build();
         Track result = executeRequest(request);
-        return spotifyTrackMapper.toSpotifyTrack(result, audioTagId);
+        return spotifyTrackMapper.toConnectedSpotifyTrack(result, audioTagId);
     }
 
-    public List<SpotifyTrack> search(AudioTag audioTag, List<SpotifySearchParameter> spotifySearchParameters) {
+    public List<ConnectedSpotifyTrack> search(AudioTag audioTag, List<SpotifySearchParameter> spotifySearchParameters) {
         ClientCredentialsRequest credentialsRequest = spotifyApi.clientCredentials().build();
         ClientCredentials credentials = executeRequest(credentialsRequest);
         spotifyApi.setAccessToken(credentials.getAccessToken());
@@ -55,9 +55,9 @@ public class SpotifySearcher {
         return toSpotifyTracks(audioTag, result);
     }
 
-    public Optional<SpotifyTrack> getMostPopularForTag(AudioTag audioTag, List<SpotifySearchParameter> spotifySearchParameters) {
-        List<SpotifyTrack> spotifyTracks = search(audioTag, spotifySearchParameters);
-        return filterMostPopular(spotifyTracks, audioTag);
+    public Optional<ConnectedSpotifyTrack> getMostPopularForTag(AudioTag audioTag, List<SpotifySearchParameter> spotifySearchParameters) {
+        List<ConnectedSpotifyTrack> connectedSpotifyTracks = search(audioTag, spotifySearchParameters);
+        return filterMostPopular(connectedSpotifyTracks, audioTag);
     }
 
 
@@ -67,15 +67,15 @@ public class SpotifySearcher {
                 .build();
     }
 
-    private List<SpotifyTrack> toSpotifyTracks(AudioTag audioTag, Paging<Track> result) {
+    private List<ConnectedSpotifyTrack> toSpotifyTracks(AudioTag audioTag, Paging<Track> result) {
         return Arrays.stream(result.getItems())
-                .map(track -> spotifyTrackMapper.toSpotifyTrack(track, audioTag.getId()))
+                .map(track -> spotifyTrackMapper.toConnectedSpotifyTrack(track, audioTag.getId()))
                 .collect(Collectors.toList());
     }
 
-    private Optional<SpotifyTrack> filterMostPopular(List<SpotifyTrack> tracks, AudioTag audioTag) {
-        Optional<SpotifyTrack> result = tracks.stream()
-                .max(Comparator.comparing(SpotifyTrack::getPopularity));
+    private Optional<ConnectedSpotifyTrack> filterMostPopular(List<ConnectedSpotifyTrack> tracks, AudioTag audioTag) {
+        Optional<ConnectedSpotifyTrack> result = tracks.stream()
+                .max(Comparator.comparing(ConnectedSpotifyTrack::getPopularity));
         result.ifPresentOrElse(
                 track -> log.info("search result found for {}", audioTag.toString()),
                 () -> log.warn("search result not found for {}", audioTag.toString()));

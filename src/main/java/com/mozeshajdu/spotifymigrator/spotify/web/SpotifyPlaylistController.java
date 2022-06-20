@@ -1,6 +1,7 @@
 package com.mozeshajdu.spotifymigrator.spotify.web;
 
 import com.mozeshajdu.spotifymigrator.spotify.entity.SpotifyPlaylist;
+import com.mozeshajdu.spotifymigrator.spotify.entity.SpotifyPlaylistDetail;
 import com.mozeshajdu.spotifymigrator.spotify.service.SpotifyPlaylistService;
 import com.mozeshajdu.spotifymigrator.tagging.client.AudioTagQuery;
 import io.swagger.v3.oas.annotations.Operation;
@@ -27,6 +28,12 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class SpotifyPlaylistController {
     SpotifyPlaylistService spotifyPlaylistService;
+
+    @Operation(summary = "Get playlist details")
+    @GetMapping(value = "/{id}")
+    public ResponseEntity<SpotifyPlaylistDetail> getPlaylistDetails(@PathVariable String id) {
+        return ResponseEntity.ok(spotifyPlaylistService.getPlaylist(id));
+    }
 
     @Operation(summary = "Get followed playlists")
     @GetMapping(value = "/me")

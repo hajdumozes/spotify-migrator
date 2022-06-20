@@ -4,18 +4,11 @@ import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 
-import java.util.List;
-
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class LikedTrack {
-    String spotifyId;
+public class PlaylistItem {
+    String id;
     String name;
-    String album;
-    String releaseDate;
-    List<String> artists;
-    Integer popularity;
-    String trackNumber;
     String url;
     String uri;
 }

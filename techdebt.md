@@ -1,3 +1,4 @@
+- query on spotify by static query
 - controller advice for missing token
 - refresh token usage
 - replace produce spotify track with message object

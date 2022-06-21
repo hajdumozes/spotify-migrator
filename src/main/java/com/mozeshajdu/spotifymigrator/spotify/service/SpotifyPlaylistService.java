@@ -16,6 +16,7 @@ import com.mozeshajdu.spotifymigrator.tagging.event.PlaylistItemAddedMessageProd
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import se.michaelthelin.spotify.SpotifyApi;
 import se.michaelthelin.spotify.model_objects.specification.Playlist;
@@ -36,6 +37,7 @@ import static com.mozeshajdu.spotifymigrator.spotify.util.SpotifyApiUtil.execute
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@Slf4j
 public class SpotifyPlaylistService {
     SpotifyApi spotifyApi;
     PlaylistMapper playlistMapper;
@@ -85,9 +87,11 @@ public class SpotifyPlaylistService {
                 .map(AudioTagSpotifyTrack::getUri)
                 .collect(Collectors.toList());
         urisToAdd.removeAll(urisAlreadyInPlaylist);
-        AddItemsToPlaylistRequest request = spotifyApi.addItemsToPlaylist(playlistId, urisToAdd.toArray(String[]::new)).build();
-        executeRequest(request);
-        playlistItemAddedMessageProducer.produce(new PlaylistItemAddedMessage(playlistId, urisToAdd));
+        if (urisToAdd.size() > 0) {
+            addToPlaylist(playlistId, urisToAdd);
+        } else {
+            log.warn("No tracks to add to playlist {}", playlist.getName());
+        }
     }
 
     private User getUserProfile() {

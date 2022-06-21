@@ -1,3 +1,4 @@
+- only like tracks, which were not liked before
 - ignore empty string on spotify track query
 - controller advice for missing token
 - refresh token usage

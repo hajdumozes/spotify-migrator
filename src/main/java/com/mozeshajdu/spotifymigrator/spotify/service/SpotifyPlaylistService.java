@@ -1,5 +1,6 @@
 package com.mozeshajdu.spotifymigrator.spotify.service;
 
+import com.mozeshajdu.spotifymigrator.spotify.entity.PlaylistItem;
 import com.mozeshajdu.spotifymigrator.spotify.entity.SpotifyPlaylist;
 import com.mozeshajdu.spotifymigrator.spotify.entity.SpotifyPlaylistDetail;
 import com.mozeshajdu.spotifymigrator.spotify.entity.event.PlaylistDeletedMessage;
@@ -75,13 +76,18 @@ public class SpotifyPlaylistService {
     }
 
     public void addToPlaylist(String playlistId, AudioTagQuery audioTagQuery) {
-        List<String> uris = audioTagManagerClient.find(audioTagQuery).stream()
+        SpotifyPlaylistDetail playlist = getPlaylist(playlistId);
+        List<String> urisAlreadyInPlaylist = playlist.getTracks().stream()
+                .map(PlaylistItem::getUri)
+                .collect(Collectors.toList());
+        List<String> urisToAdd = audioTagManagerClient.find(audioTagQuery).stream()
                 .map(AudioTag::getSpotifyTrack)
                 .map(AudioTagSpotifyTrack::getUri)
                 .collect(Collectors.toList());
-        AddItemsToPlaylistRequest request = spotifyApi.addItemsToPlaylist(playlistId, uris.toArray(String[]::new)).build();
+        urisToAdd.removeAll(urisAlreadyInPlaylist);
+        AddItemsToPlaylistRequest request = spotifyApi.addItemsToPlaylist(playlistId, urisToAdd.toArray(String[]::new)).build();
         executeRequest(request);
-        playlistItemAddedMessageProducer.produce(new PlaylistItemAddedMessage(playlistId, uris));
+        playlistItemAddedMessageProducer.produce(new PlaylistItemAddedMessage(playlistId, urisToAdd));
     }
 
     private User getUserProfile() {

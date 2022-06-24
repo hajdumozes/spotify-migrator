@@ -1,7 +1,7 @@
 package com.mozeshajdu.spotifymigrator.spotify.service;
 
-import com.mozeshajdu.spotifymigrator.spotify.entity.SpotifyTrack;
 import com.mozeshajdu.spotifymigrator.spotify.entity.SpotifyAction;
+import com.mozeshajdu.spotifymigrator.spotify.entity.SpotifyTrack;
 import com.mozeshajdu.spotifymigrator.spotify.entity.event.TracksLikedMessage;
 import com.mozeshajdu.spotifymigrator.spotify.mapper.SpotifyTrackMapper;
 import com.mozeshajdu.spotifymigrator.tagging.client.AudioTagManagerClient;
@@ -20,7 +20,7 @@ import se.michaelthelin.spotify.requests.data.library.GetUsersSavedTracksRequest
 import se.michaelthelin.spotify.requests.data.library.RemoveUsersSavedTracksRequest;
 import se.michaelthelin.spotify.requests.data.library.SaveTracksForUserRequest;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -37,9 +37,8 @@ public class SpotifyTrackService {
     TracksLikedMessageProducer tracksLikedMessageProducer;
 
     public List<SpotifyTrack> getLikedTracks() {
-        GetUsersSavedTracksRequest request = spotifyApi.getUsersSavedTracks().build();
-        Paging<SavedTrack> savedTracks = executeRequest(request);
-        return Arrays.stream(savedTracks.getItems())
+        List<SavedTrack> savedTrackList = getAllSavedTrackPages();
+        return savedTrackList.stream()
                 .map(SavedTrack::getTrack)
                 .map(spotifyTrackMapper::toSpotifyTrack)
                 .collect(Collectors.toList());
@@ -104,5 +103,25 @@ public class SpotifyTrackService {
                 .map(AudioTagSpotifyTrack::getSpotifyId)
                 .collect(Collectors.toList());
         removeLikedTracks(ids);
+    }
+
+    private List<SavedTrack> getAllSavedTrackPages() {
+        int offset = 0;
+        int limit = 20;
+        List<SavedTrack> savedTrackList = new ArrayList<>();
+        Paging<SavedTrack> savedTrackPaging;
+        do {
+            savedTrackPaging = getSavedTrackPaging(offset);
+            savedTrackList.addAll(List.of(savedTrackPaging.getItems()));
+            offset += limit;
+        } while (savedTrackPaging.getNext() != null);
+        savedTrackPaging = getSavedTrackPaging(offset);
+        savedTrackList.addAll(List.of(savedTrackPaging.getItems()));
+        return savedTrackList;
+    }
+
+    private Paging<SavedTrack> getSavedTrackPaging(int offset) {
+        GetUsersSavedTracksRequest request = spotifyApi.getUsersSavedTracks().offset(offset).build();
+        return executeRequest(request);
     }
 }

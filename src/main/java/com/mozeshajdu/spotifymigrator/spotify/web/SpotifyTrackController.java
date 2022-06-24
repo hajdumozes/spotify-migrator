@@ -41,6 +41,12 @@ public class SpotifyTrackController {
         return ResponseEntity.ok(spotifyTrackService.getLikedTracksToMigrate());
     }
 
+    @Operation(summary = "Get liked track uris to migrate")
+    @GetMapping(value = "/me/migrate/uri")
+    public ResponseEntity<List<String>> getLikedTrackUrisToMigrate() {
+        return ResponseEntity.ok(spotifyTrackService.getLikedTrackUrisToMigrate());
+    }
+
     @Operation(summary = "Like tracks by id")
     @PostMapping(value = "/me/add", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<SpotifyTrack>> likeTracks(@RequestBody List<String> ids) {

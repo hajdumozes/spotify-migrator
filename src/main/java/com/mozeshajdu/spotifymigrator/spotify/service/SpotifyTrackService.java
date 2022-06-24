@@ -60,6 +60,12 @@ public class SpotifyTrackService {
                 .collect(Collectors.toList());
     }
 
+    public List<String> getLikedTrackUrisToMigrate() {
+        return getLikedTracksToMigrate().stream()
+                .map(SpotifyTrack::getUri)
+                .collect(Collectors.toList());
+    }
+
     public void likeTracksById(List<String> ids) {
         SaveTracksForUserRequest request = spotifyApi.saveTracksForUser(ids.toArray(String[]::new)).build();
         executeRequest(request);

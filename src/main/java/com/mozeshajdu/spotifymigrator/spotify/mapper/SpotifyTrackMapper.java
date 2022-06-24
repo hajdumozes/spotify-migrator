@@ -3,6 +3,7 @@ package com.mozeshajdu.spotifymigrator.spotify.mapper;
 import com.mozeshajdu.spotifymigrator.spotify.entity.ConnectedSpotifyTrack;
 import com.mozeshajdu.spotifymigrator.spotify.entity.PlaylistItem;
 import com.mozeshajdu.spotifymigrator.spotify.entity.SpotifyTrack;
+import com.mozeshajdu.spotifymigrator.spotify.entity.event.SpotifyTrackCreatedMessage;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Context;
 import org.mapstruct.Mapper;
@@ -26,6 +27,8 @@ public interface SpotifyTrackMapper {
     @Mapping(target = "artists", qualifiedByName = "artistName")
     @Mapping(target = "url", source = "externalUrls", qualifiedByName = "externalUrl")
     ConnectedSpotifyTrack toConnectedSpotifyTrack(Track track, @Context Long audioTagId);
+
+    SpotifyTrackCreatedMessage of(ConnectedSpotifyTrack track);
 
     @Mapping(target = "spotifyId", source = "id")
     @Mapping(target = "releaseDate", source = "album.releaseDate")

@@ -1,6 +1,6 @@
 package com.mozeshajdu.spotifymigrator.tagging.event;
 
-import com.mozeshajdu.spotifymigrator.spotify.entity.ConnectedSpotifyTrack;
+import com.mozeshajdu.spotifymigrator.spotify.entity.event.SpotifyTrackCreatedMessage;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -11,9 +11,9 @@ import reactor.core.publisher.Sinks;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class SpotifyTrackProducer {
-    Sinks.Many<ConnectedSpotifyTrack> spotifyTrackSink;
+    Sinks.Many<SpotifyTrackCreatedMessage> spotifyTrackSink;
 
-    public void produce(ConnectedSpotifyTrack connectedSpotifyTrack) {
+    public void produce(SpotifyTrackCreatedMessage connectedSpotifyTrack) {
         spotifyTrackSink.tryEmitNext(connectedSpotifyTrack);
     }
 }

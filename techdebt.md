@@ -1,6 +1,10 @@
+### Spotify operation
 - only like tracks, which were not liked before
-- ignore empty string on spotify track query
+
+### Refactor
+- replace get disconnected liked tracks with audio tag query, which filters for liked
+- ignore empty string on spotify track query (Spotify track controller / query)
+
+### Auth
 - controller advice for missing token
 - refresh token usage
-- replace produce spotify track with message object
-- replace get disconnected liked tracks with audio tag query, which filters for liked

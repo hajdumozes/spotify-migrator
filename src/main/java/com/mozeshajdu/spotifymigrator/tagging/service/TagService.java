@@ -2,6 +2,7 @@ package com.mozeshajdu.spotifymigrator.tagging.service;
 
 import com.mozeshajdu.spotifymigrator.spotify.entity.ConnectedSpotifyTrack;
 import com.mozeshajdu.spotifymigrator.spotify.entity.SpotifySearchParameter;
+import com.mozeshajdu.spotifymigrator.spotify.mapper.SpotifyTrackMapper;
 import com.mozeshajdu.spotifymigrator.spotify.service.SpotifySearcher;
 import com.mozeshajdu.spotifymigrator.tagging.client.AudioTagManagerClient;
 import com.mozeshajdu.spotifymigrator.tagging.client.AudioTagQuery;
@@ -26,12 +27,14 @@ public class TagService {
     AudioTagManagerClient audioTagManagerClient;
     SpotifySearcher spotifySearcher;
     SpotifyTrackProducer spotifyTrackProducer;
+    SpotifyTrackMapper spotifyTrackMapper;
 
     public void produceSpotifyTracksForAudioTags(List<SpotifySearchParameter> spotifySearchParameters, AudioTagQuery audioTagQuery) {
         List<AudioTag> audioTags = audioTagManagerClient.find(audioTagQuery);
         audioTags.stream()
                 .map(audioTag -> spotifySearcher.getMostPopularForTag(audioTag, spotifySearchParameters))
                 .flatMap(Optional::stream)
+                .map(spotifyTrackMapper::of)
                 .forEach(spotifyTrackProducer::produce);
     }
 
@@ -59,6 +62,6 @@ public class TagService {
 
     public void connect(String spotifyId, Long audioTagId) {
         ConnectedSpotifyTrack track = spotifySearcher.getById(spotifyId, audioTagId);
-        spotifyTrackProducer.produce(track);
+        spotifyTrackProducer.produce(spotifyTrackMapper.of(track));
     }
 }

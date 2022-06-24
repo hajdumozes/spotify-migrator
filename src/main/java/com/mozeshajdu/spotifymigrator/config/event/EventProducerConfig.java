@@ -1,9 +1,9 @@
 package com.mozeshajdu.spotifymigrator.config.event;
 
-import com.mozeshajdu.spotifymigrator.spotify.entity.ConnectedSpotifyTrack;
 import com.mozeshajdu.spotifymigrator.spotify.entity.event.PlaylistCreatedMessage;
 import com.mozeshajdu.spotifymigrator.spotify.entity.event.PlaylistDeletedMessage;
 import com.mozeshajdu.spotifymigrator.spotify.entity.event.PlaylistItemAddedMessage;
+import com.mozeshajdu.spotifymigrator.spotify.entity.event.SpotifyTrackCreatedMessage;
 import com.mozeshajdu.spotifymigrator.spotify.entity.event.TracksLikedMessage;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,12 +16,12 @@ import java.util.function.Supplier;
 public class EventProducerConfig {
 
     @Bean
-    public Sinks.Many<ConnectedSpotifyTrack> spotifyTrackMany() {
+    public Sinks.Many<SpotifyTrackCreatedMessage> spotifyTrackMany() {
         return Sinks.many().unicast().onBackpressureBuffer();
     }
 
     @Bean
-    Supplier<Flux<ConnectedSpotifyTrack>> produceSpotifyTracks(Sinks.Many<ConnectedSpotifyTrack> spotifyTrackMany) {
+    Supplier<Flux<SpotifyTrackCreatedMessage>> produceSpotifyTracks(Sinks.Many<SpotifyTrackCreatedMessage> spotifyTrackMany) {
         return spotifyTrackMany::asFlux;
     }
 

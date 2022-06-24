@@ -35,9 +35,10 @@ public class SpotifyTrackController {
         return ResponseEntity.ok(spotifyTrackService.getLikedTracks());
     }
 
-    @GetMapping(value = "/me/disconnected")
-    public ResponseEntity<List<SpotifyTrack>> getDisconnectedLikesTracks() {
-        return ResponseEntity.ok(spotifyTrackService.getDisconnectedLikedTracks());
+    @Operation(summary = "Get liked tracks to migrate")
+    @GetMapping(value = "/me/migrate")
+    public ResponseEntity<List<SpotifyTrack>> getLikedTracksToMigrate() {
+        return ResponseEntity.ok(spotifyTrackService.getLikedTracksToMigrate());
     }
 
     @Operation(summary = "Like tracks by id")

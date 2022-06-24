@@ -45,18 +45,18 @@ public class SpotifyTrackService {
                 .collect(Collectors.toList());
     }
 
-    public List<SpotifyTrack> getDisconnectedLikedTracks() {
-        List<SpotifyTrack> spotifyTracks = getLikedTracks();
+    public List<SpotifyTrack> getLikedTracksToMigrate() {
+        List<SpotifyTrack> likedTracksOnSpotify = getLikedTracks();
         List<AudioTag> audioTagsWithSpotifyConnection = audioTagManagerClient.find(AudioTagQuery.builder()
                 .spotifyTrackPresence(true)
                 .build());
-        List<String> spotifyTracksInCollection = audioTagsWithSpotifyConnection.stream()
+        List<String> migratedSpotifyIds = audioTagsWithSpotifyConnection.stream()
                 .map(AudioTag::getSpotifyTrack)
                 .filter(Objects::nonNull)
                 .map(AudioTagSpotifyTrack::getSpotifyId)
                 .collect(Collectors.toList());
-        return spotifyTracks.stream()
-                .filter(spotifyTrack -> !spotifyTracksInCollection.contains(spotifyTrack.getSpotifyId()))
+        return likedTracksOnSpotify.stream()
+                .filter(likedTrack -> !migratedSpotifyIds.contains(likedTrack.getSpotifyId()))
                 .collect(Collectors.toList());
     }
 

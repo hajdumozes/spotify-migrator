@@ -51,7 +51,7 @@ public class TagService {
                 .orElseThrow(() -> new AudioTagNotFoundException(Long.toString(audioTagId)));
         return spotifySearcher.search(audioTag, spotifySearchParameters)
                 .stream()
-                .sorted(Comparator.comparing(ConnectedSpotifyTrack::getPopularity, Comparator.reverseOrder()))
+                .sorted(Comparator.comparing(ConnectedSpotifyTrack::getPopularity, Comparator.nullsLast(Comparator.reverseOrder())))
                 .collect(Collectors.toList());
     }
 

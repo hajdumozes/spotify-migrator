@@ -4,6 +4,7 @@ spotify:
   client-id: ${CLIENT_ID}
   client-secret: ${CLIENT_SECRET}
   redirect-uri: ${REDIRECT_URI}
+  search-param-length: ${SPOTIFY_SEARCH_PARAM_LENGTH:20}
 client:
   audio-tag-manager-url: ${AUDIO_TAG_MANAGER_URL}
 spring:

@@ -11,6 +11,7 @@ Migration stands for the following: following users, following albums, like trac
 | `CLIENT_ID`                               | string   |                                                    | Given by Spotify |
 | `CLIENT_SECRET`                           | string   |                                                    | Given by Spotify |
 | `REDIRECT_URI`                            | string   |                                                    | Given by Spotify |
+| `SPOTIFY_SEARCH_PARAM_LENGTH`             | integer  | 20                                                 | Too long query params might cause 404 errors on Spotifył |
 | `AUDIO_TAG_MANAGER_URL`                   | string   |                                                    | Host of audio-tag-manager application |
 | `KAFKA_SERVER`                            | string   |                                                    |  |
 | `KAFKA_SPOTIFY_TRACK_TOPIC`               | string   | spotify-track-created                              |  |

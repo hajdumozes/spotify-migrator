@@ -11,4 +11,5 @@ public class SpotifyProperties {
     String clientId;
     String clientSecret;
     String redirectUri;
+    int searchParamLength;
 }

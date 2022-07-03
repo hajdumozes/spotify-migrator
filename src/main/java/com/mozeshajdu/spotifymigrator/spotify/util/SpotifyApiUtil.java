@@ -12,7 +12,7 @@ public class SpotifyApiUtil {
         try {
             return request.execute();
         } catch (Exception e) {
-            throw new SpotifyApiException(e.getMessage());
+            throw new SpotifyApiException(new SpotifyApiException.SpotifyApiExceptionDetail<>(request.getClass(), request.getUri()));
         }
     }
 }

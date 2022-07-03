@@ -1,7 +1,17 @@
 package com.mozeshajdu.spotifymigrator.spotify.exception;
 
-public class SpotifyApiException extends RuntimeException{
-    public SpotifyApiException(String message) {
-        super(message);
+import lombok.Value;
+
+import java.net.URI;
+
+public class SpotifyApiException extends RuntimeException {
+    public <T> SpotifyApiException(SpotifyApiExceptionDetail<T> request) {
+        super(request.toString());
+    }
+
+    @Value
+    public static class SpotifyApiExceptionDetail<T> {
+        Class<T> requestClass;
+        URI uri;
     }
 }
